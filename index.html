@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Utkarsh Pandey</title>
+<meta name="description" content="Utkarsh Pandey, marketer. A desk of campaigns and the numbers they moved.">
+<meta name="theme-color" content="#2F7FD8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Gaegu:wght@400;700&display=swap">
+<style>
+/* Layout: hero -> story -> journey (scroll-lit timeline) -> work (case cards) -> desk (draggable) -> contact. */
+:root {
+  --paper: #FFF8EC; --paper-2: #FFF1D9;
+  --ink: #13233A; --ink-2: #4B5D72; --line: rgba(19,35,58,.14);
+  --sky: #2F7FD8; --sky-2: #9FD3FF; --sun: #FFD23F; --coral: #FF6B4A; --grass: #4F9E4A; --lilac: #B7A2FF;
+  --card: #FFFDF7;
+  --shadow: 0 30px 70px -24px rgba(19,35,58,.38), 0 2px 8px rgba(19,35,58,.08);
+  --shadow-sm: 0 10px 24px -12px rgba(19,35,58,.35);
+  --sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Gaegu", "Comic Sans MS", cursive;
+  --ease: cubic-bezier(.22,1,.36,1); --spring: cubic-bezier(.34,1.56,.64,1);
+  color-scheme: light;
+}
+html[data-theme="night"] {
+  --paper: #0F1A2B; --paper-2: #14233A; --ink: #F4EEE0; --ink-2: #A8B4C4; --line: rgba(244,238,224,.16);
+  --card: #172942; --shadow: 0 30px 70px -24px rgba(0,0,0,.7), 0 2px 8px rgba(0,0,0,.3); --shadow-sm: 0 10px 24px -12px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); overflow-x: clip; }
+html.lenis, html.lenis body { height: auto; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 var(--sans); overflow-x: clip;
+  -webkit-font-smoothing: antialiased; transition: background .6s var(--ease), color .6s var(--ease); }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 2.5px solid var(--coral); outline-offset: 3px; border-radius: 10px; }
+p, li { text-wrap: pretty; }
+h1, h2, h3, .lead { text-wrap: balance; }
+.wrap { width: min(76rem, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
+section { padding-block: clamp(72px, 14vh, 160px); position: relative; }
+
+/* brush highlights */
+.hl { position: relative; z-index: 0; white-space: nowrap; }
+.hl::before { content: ""; position: absolute; z-index: -1; inset: .12em -.12em .02em -.14em; background: var(--b) center / 100% 100% no-repeat;
+  clip-path: inset(0 100% 0 0); transition: clip-path 1s var(--ease) .5s; }
+.on .hl::before, .hl.on::before { clip-path: inset(0 0 0 0); }
+.b-sun   { --b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M7 33C18 12 58 8 108 9c42 1 78-2 87 14 5 11-4 24-35 27-40 4-100 5-137 1C6 49 1 43 7 33z' fill='%23FFD23F'/%3E%3C/svg%3E"); }
+.b-sky   { --b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 30C14 11 60 9 104 10c46 1 82-1 90 15 6 12-6 23-38 25-40 3-98 4-134 0C5 48 0 41 5 30z' fill='%239FD3FF'/%3E%3C/svg%3E"); }
+.b-coral { --b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M6 31C16 13 56 7 104 8c46 1 80 0 89 15 5 12-5 25-36 27-42 3-100 5-135 1C5 49 1 42 6 31z' fill='%23FFB4A0'/%3E%3C/svg%3E"); }
+.b-lilac { --b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M6 31C16 13 56 7 104 8c46 1 80 0 89 15 5 12-5 25-36 27-42 3-100 5-135 1C5 49 1 42 6 31z' fill='%23D9CCFF'/%3E%3C/svg%3E"); }
+html[data-theme="night"] .hl { color: #13233A; }
+
+/* reveal */
+.rv { opacity: 0; transform: translateY(40px); transition: opacity 1.2s var(--ease), transform 1.4s var(--ease); transition-delay: var(--d, 0s); }
+.rv.on { opacity: 1; transform: none; }
+
+/* top bar */
+.bar { position: fixed; inset: 0 0 auto 0; z-index: 30; display: flex; justify-content: space-between; align-items: center;
+  padding: 16px clamp(16px, 4vw, 48px); pointer-events: none; }
+.bar > * { pointer-events: auto; }
+.bar .name { font-weight: 800; letter-spacing: -.03em; text-decoration: none; }
+.toggle { padding: 8px 14px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow-sm); font: 700 18px/1 var(--hand); transition: transform .4s var(--spring); }
+.toggle:hover { transform: scale(1.06) rotate(-2deg); }
+.tools { display: flex; gap: 8px; }
+@media (max-width: 600px) { .toggle { padding: 7px 10px; font-size: 16px; } .tools { gap: 6px; } }
+
+/* pill nav */
+.nav { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%); z-index: 30;
+  display: flex; gap: 2px; padding: 8px; border-radius: 999px; background: color-mix(in srgb, var(--card) 82%, transparent);
+  backdrop-filter: blur(14px); box-shadow: var(--shadow); transition: transform .7s var(--ease), opacity .4s; }
+.nav.away { transform: translate(-50%, 140%); opacity: 0; pointer-events: none; }
+.nav a { position: relative; z-index: 1; display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 999px;
+  font: 600 15px/1 var(--sans); letter-spacing: -.01em; color: var(--ink-2); text-decoration: none; transition: color .3s, background .3s; }
+.nav a:hover, .nav a.on { color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.nav a.cta { color: var(--paper); background: var(--ink); }
+.nav a.cta:hover { transform: translateY(-1px); }
+
+/* hero */
+.hero { position: relative; min-height: 100svh; display: grid; align-content: start; padding-top: clamp(76px, 9vh, 100px); overflow: hidden; text-align: left; background: #8EC5F0; isolation: isolate; }
+
+.hero .kicker, .kicker { font: 700 22px/1 var(--hand); color: var(--coral); margin: 0 0 18px; }
+.hero h1 { margin: 0; font-weight: 800; font-size: clamp(2.4rem, 7.4vw, 7rem); line-height: .96; letter-spacing: -.055em; max-width: 14ch; }
+.hero h1 .ln { display: block; overflow: hidden; padding: .03em .12em .1em 0; margin-bottom: -.06em; }
+.hero h1 .ln > span { display: inline-block; animation: rise 1.2s var(--ease) both; animation-delay: var(--dl, .2s); }
+@keyframes rise { from { transform: translateY(110%); } to { transform: none; } }
+.hero .lead { margin: 28px 0 0; font-size: clamp(19px, 1.8vw, 26px); line-height: 1.3; color: var(--ink-2); max-width: 44ch; }
+.hero-img { position: absolute; inset: 0; z-index: -2; }
+.hero-img img { width: 100%; height: 100%; object-fit: cover; object-position: 22% 100%; transform-origin: 30% 100%; animation: heroZoom 2.4s var(--ease) both; }
+@keyframes heroZoom { from { transform: scale(1.12); } to { transform: none; } }
+.hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 46%); pointer-events: none; }
+.hero .wrap { display: grid; justify-items: start; }
+.hero .kicker { color: #D9482B; background: rgba(255,255,255,.7); padding: 8px 16px 6px; border-radius: 999px; backdrop-filter: blur(6px); }
+.hero h1 { color: #13233A; max-width: none; font-size: clamp(2rem, 4.6vw, 4.4rem); }
+.hero h1 .ln { padding-right: .06em; }
+.hero .lead { color: #13233A; max-width: 44ch; margin-top: 22px; padding: 12px 20px; font-size: clamp(16px, 1.35vw, 20px); background: rgba(255,255,255,.82); border-radius: 18px; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(19,35,58,.12); }
+.hero ~ .bar .name, body:has(.hero-img) .bar .name { text-shadow: 0 1px 10px rgba(0,0,0,.45); }
+.hero .hint { display: none; }
+@media (max-width: 700px) { .hero-img img { object-position: 14% 100%; } }
+@media (prefers-reduced-motion: reduce) { .hero-img img { animation: none; } }
+.hint { font: 700 20px/1 var(--hand); color: var(--ink-2); margin-top: 40px; display: inline-block; animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(6px); } }
+.blob { position: absolute; border-radius: 50%; filter: blur(2px); opacity: .9; z-index: -1; will-change: transform; }
+.blob.a { width: 34vw; height: 34vw; right: -8vw; top: 10vh; background: var(--sky-2); }
+.blob.b { width: 16vw; height: 16vw; right: 20vw; bottom: 8vh; background: var(--sun); }
+.blob.c { width: 9vw; height: 9vw; right: 6vw; bottom: 22vh; background: var(--coral); }
+
+/* section heads */
+.sec-head { display: grid; gap: 10px; margin-bottom: clamp(28px, 7vh, 72px); }
+.sec-head h2 { margin: 0; font-weight: 800; font-size: clamp(2.4rem, 6vw, 5.8rem); line-height: .94; letter-spacing: -.055em; max-width: 16ch; }
+.sec-head p:not(.kicker) { margin: 0; font-size: clamp(19px, 1.7vw, 25px); line-height: 1.3; color: var(--ink-2); max-width: 60ch; }
+
+
+/* hero night: a second photo crossfades in over the day one, synced with the Night toggle */
+.hero-img img.night { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s cubic-bezier(.4,0,.2,1); will-change: opacity; }
+html[data-theme="night"] .hero-img img.night { opacity: 1; }
+.hero { transition: background-color 1.6s ease; }
+html[data-theme="night"] .hero { background: #0B1633; }
+.hero::before { transition: background 1.6s ease; }
+html[data-theme="night"] .hero::before { background: linear-gradient(180deg, rgba(8,14,34,.5) 0%, rgba(8,14,34,0) 46%); }
+.hero h1, .hero .kicker { transition: color 1.6s ease, background-color 1.6s ease, text-shadow 1.6s ease; }
+html[data-theme="night"] .hero h1 { color: #F6EEDD; text-shadow: 0 2px 24px rgba(0,0,0,.45); }
+html[data-theme="night"] .hero h1 .hl { color: #13233A; }
+.hero h1 .hl { padding: 0 .16em; margin: 0 .04em; }
+.hero h1 .hl::before { inset: .02em 0 -.1em 0; background: #FFD23F; border-radius: .26em; }
+html[data-theme="night"] .hero h1 .hl { text-shadow: none; }
+/* support line: plain text, no box; colour and glow follow day/night so it reads over the photo */
+.hero .lead { padding: 0; background: none; border-radius: 0; box-shadow: none; backdrop-filter: none; margin-top: 12px !important; max-width: 44ch; font-weight: 600; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.3; letter-spacing: -.01em;
+  color: #0E1D33; text-shadow: 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85), 0 1px 2px rgba(255,255,255,.9); transition: color 1.6s ease, text-shadow 1.6s ease; }
+html[data-theme="night"] .hero .lead { color: #FFF3DC; text-shadow: 0 0 10px rgba(6,12,30,.95), 0 0 22px rgba(6,12,30,.85), 0 1px 3px rgba(0,0,0,.8); }
+html[data-theme="night"] .hero .kicker { background: rgba(19,35,58,.75); color: #FFB59E; }
+
+/* intro (second fold) */
+.intro { padding-bottom: 0; text-align: left; }
+.intro + .story { padding-top: clamp(40px, 7vh, 72px); }
+.intro h2 { margin: 0; font-weight: 800; font-size: clamp(2.4rem, 7vw, 6.6rem); line-height: .96; letter-spacing: -.055em; max-width: 14ch; }
+.intro-grid { display: grid; grid-template-columns: minmax(220px, 340px) 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+.intro-ph { margin: 0; }
+.story-grid { display: grid; grid-template-columns: 1fr minmax(220px, 360px); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.story .pola { position: relative; left: auto; top: auto; width: 100%; z-index: 1; display: block; cursor: zoom-in; border: 0; }
+.intro .pola { position: relative; left: auto; top: auto; width: 100%; z-index: 1; display: block; cursor: zoom-in; border: 0; }
+.intro-tx h2 { font-size: clamp(2.2rem, 5.4vw, 5.2rem); }
+@media (max-width: 760px) { .intro-grid { grid-template-columns: 1fr; } .intro-ph { width: min(260px, 72%); } .story-grid { grid-template-columns: 1fr; } .intro-ph2 { margin-left: auto; width: min(300px, 80%); } }
+.intro .lead { margin: 28px 0 0; font-size: clamp(19px, 1.8vw, 26px); line-height: 1.3; color: var(--ink-2); max-width: 44ch; }
+
+/* story */
+.story p.big { margin: 0 0 1em; font-size: clamp(1.5rem, 3.2vw, 2.9rem); line-height: 1.12; letter-spacing: -.035em; font-weight: 600; max-width: 28ch; }
+.story p.big em { font-style: normal; color: var(--coral); }
+
+/* journey: pinned map; scroll walks an arrow along the route while the camera follows */
+.journey { padding: 0; background: var(--land); --land: #F6EEDD; --water: #BFE0F5; --park: #CFE6C0; --road: #FFFDF7; --route: rgba(19,35,58,.18); }
+html[data-theme="night"] .journey { --land: #16263D; --water: #1D3F63; --park: #1D3B34; --road: #223654; --route: rgba(244,238,224,.2); }
+.j-track { position: relative; height: calc(100svh * 6.2); }
+.j-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--land); contain: layout paint; }
+.j-world { position: absolute; left: 0; top: 0; width: 4800px; height: 3200px; transform-origin: 0 0; will-change: transform; }
+.j-world > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.j-world .casing { fill: none; stroke: var(--road); stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
+.j-world .base { fill: none; stroke: var(--route); stroke-width: 8; stroke-dasharray: 2 18; stroke-linecap: round; }
+.j-world .done { fill: none; stroke: var(--coral); stroke-width: 9; stroke-linecap: round; }
+.j-me { position: absolute; left: 0; top: 0; width: 44px; height: 72px; margin: -36px 0 0 -22px; z-index: 5; will-change: transform; }
+.j-me svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 6px rgba(19,35,58,.3)); }
+.j-me .bob { animation: bob2 .5s ease-in-out infinite alternate; }
+@keyframes bob2 { to { transform: translateY(-1.6px); } }
+.mk { position: absolute; z-index: 3; width: 0; height: 0; }
+.mk button { position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; border-radius: 50%; background: var(--card); color: var(--ink);
+  border: 4px solid var(--c); font: 800 16px/1 var(--sans); display: grid; place-items: center; box-shadow: var(--shadow-sm); transition: transform .5s var(--spring), background .3s, color .3s; }
+.mk.reached button { background: var(--c); color: #13233A; }
+.mk.on button { transform: scale(1.25); }
+.mk .lg { position: absolute; left: 0; bottom: 34px; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 16px; background: var(--card); color: var(--ink);
+  box-shadow: var(--shadow); white-space: nowrap; opacity: 0; transform: translate(-50%, 12px) scale(.6); transform-origin: 50% 100%; pointer-events: none;
+  transition: opacity .5s var(--ease), transform .8s var(--spring); }
+.mk .lg::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 12px; height: 12px; background: var(--card); transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
+.mk.reached .lg { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.mk .lg .mono, .mk .lg img { height: 42px; border-radius: 12px; flex: none; }
+.mk .lg .mono { width: 42px; }
+.mk .lg .mono { display: grid; place-items: center; background: var(--c); color: #13233A; font: 800 15px/1 var(--sans); letter-spacing: -.02em; }
+.mk .lg img { width: auto; min-width: 42px; max-width: 118px; object-fit: contain; background: #fff; padding: 6px; box-shadow: inset 0 0 0 1px rgba(19,35,58,.1); }
+.mk .lg b { display: block; font: 700 15px/1.15 var(--sans); }
+.mk .lg small { display: block; margin-top: 2px; font: 600 12px/1.2 var(--sans); color: var(--ink-2); }
+.jcard.ov .jc-in { }
+.ov-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.ov-list button { display: grid; grid-template-columns: 14px 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 10px 8px; border-radius: 12px; text-align: left; transition: background .3s; }
+.ov-list button:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.ov-list i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.ov-list b { display: block; font: 700 15px/1.2 var(--sans); } .ov-list small { color: var(--ink-2); font-size: 13px; }
+.ov-list em { font: 700 12px/1 var(--sans); font-style: normal; color: var(--ink-2); }
+.j-left { position: absolute; z-index: 6; left: clamp(16px, 3vw, 44px); top: 84px; bottom: 96px; width: min(27rem, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 16px; pointer-events: none; }
+.j-left > * { pointer-events: auto; }
+.j-head h2 { margin: 0; font-weight: 800; font-size: clamp(2rem, 3.6vw, 3.4rem); line-height: .96; letter-spacing: -.05em; text-shadow: 0 0 18px var(--land), 0 0 6px var(--land); }
+.j-head p { margin: 10px 0 0; color: var(--ink-2); font-size: 17px; text-shadow: 0 0 10px var(--land); }
+.j-head .kicker { margin-bottom: 10px; }
+.jcard { margin-block: auto 0; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--ink) 28%, transparent) transparent; border-radius: 28px; background: var(--card); box-shadow: var(--shadow); }
+.jcard::-webkit-scrollbar { width: 8px; } .jcard::-webkit-scrollbar-track { background: transparent; margin-block: 14px; } .jcard::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink) 28%, transparent); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+.jc-in { transition: opacity .3s var(--ease), transform .5s var(--ease); }
+.jcard.swap .jc-in { opacity: 0; transform: translateY(10px); }
+.jc-top { display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: color-mix(in srgb, var(--c) 18%, var(--card)); border-bottom: 1px solid color-mix(in srgb, var(--c) 20%, transparent); }
+.jc-top .tile { flex: none; width: 44px; height: 44px; border-radius: 14px; background: var(--c); color: #13233A; display: grid; place-items: center; font: 800 18px/1 var(--sans); border: 2px solid var(--card); }
+.jc-top p { margin: 0; font: 600 14px/1.3 var(--sans); color: var(--ink-2); }
+.jc-top p b { display: block; font-size: 15px; color: var(--ink); letter-spacing: -.01em; }
+.jc-top em { margin-left: auto; font: 700 12px/1 var(--sans); font-style: normal; letter-spacing: .08em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.jc-bd { padding: 22px 24px 20px; }
+.jcard h3 { margin: 0 0 10px; font: 800 clamp(24px, 2.1vw, 31px)/1.05 var(--sans); letter-spacing: -.035em; }
+.jcard .txt { margin: 0; color: var(--ink-2); }
+.jc-stats { display: flex; gap: 0; margin: 16px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); list-style: none; }
+.jc-stats li { flex: 1; padding: 0 12px; border-left: 1px solid var(--line); }
+.jc-stats li:first-child { padding-left: 0; border: 0; }
+.jc-stats b { display: block; font: 800 30px/1 var(--sans); letter-spacing: -.04em; color: color-mix(in srgb, var(--c) 70%, var(--ink)); }
+.jc-stats span { display: block; margin-top: 6px; font: 500 13px/1.3 var(--sans); color: var(--ink-2); }
+.jc-gal { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.jc-gal > span { display: block; margin-bottom: 10px; font: 700 12px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.jc-gal > div { display: flex; gap: 8px; align-items: flex-start; max-width: calc(var(--sum) * clamp(52px, 13svh, 132px) + 24px); }
+.jc-gal button { padding: 0; border-radius: 14px; overflow: hidden; min-width: 0; background: color-mix(in srgb, var(--ink) 8%, transparent); transition: transform .5s var(--spring), box-shadow .3s; }
+.jc-gal button:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: var(--shadow-sm); }
+.jc-gal img { width: 100%; height: auto; display: block; }
+/* short windows: give the card the room the intro text used, and tighten its spacing so the photos and Back/Next stay in view */
+@media (max-height: 820px) { .j-head p:not(.kicker) { display: none; } .jc-gal { margin-top: 10px; padding-top: 10px; } .jc-gal > span { margin-bottom: 6px; } .jc-stats { margin-top: 10px; padding-top: 10px; } .jc-stats b { font-size: 24px; } .jc-nav { margin-top: 12px; padding-top: 10px; } .jc-bd { padding-block: 16px 14px; } .jcard h3 { margin-bottom: 6px; } }
+@media (max-height: 780px) { .j-head { display: none; } .j-left { top: 76px; } }
+@media (max-height: 760px) { .ov-list { gap: 0; } .ov-list button { padding: 6px 8px; } .jcard .jc-bd { padding-block: 14px 14px; } }
+@media (max-height: 680px) { .jcard .jc-bd { padding: 10px 20px 12px; } .jcard h3 { font-size: 22px; margin-bottom: 6px; } .jcard .txt { font-size: 15px; line-height: 1.35; } .jc-stats { margin-top: 8px; padding-top: 8px; } .jc-gal { margin-top: 8px; padding-top: 8px; } .jc-nav { margin-top: 8px; padding-top: 8px; } .jc-top { padding: 10px 20px; } }
+@media (max-height: 640px) { .ov-list small { display: none; } .j-left { top: 64px; bottom: 76px; } .jc-top { padding-block: 12px; } }
+.lb { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 24px; background: rgba(8,14,28,.82); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity .4s var(--ease); cursor: zoom-out; }
+.lb.open { opacity: 1; pointer-events: auto; }
+.lb img { max-width: min(1100px, 100%); max-height: 86svh; border-radius: 18px; box-shadow: var(--shadow); transform: scale(.94); transition: transform .5s var(--spring); }
+.lb.open img { transform: none; }
+.lb button { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: var(--card); font-size: 22px; box-shadow: var(--shadow-sm); }
+.jc-nav { display: flex; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.jc-nav button { padding: 9px 14px; border-radius: 999px; font: 700 13px/1 var(--sans); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.jc-nav button:hover { background: color-mix(in srgb, var(--ink) 13%, transparent); }
+.jc-nav button:disabled { opacity: .3; pointer-events: none; }
+.compass { position: absolute; z-index: 6; right: clamp(16px, 3vw, 44px); top: 84px; width: 84px; height: 84px; }
+.compass svg { width: 100%; height: 100%; filter: drop-shadow(0 8px 10px rgba(19,35,58,.25)); }
+.compass .ring { fill: var(--card); stroke: var(--ink); stroke-width: 1.5; }
+.compass text { fill: var(--ink); font: 800 11px var(--sans); text-anchor: middle; }
+.compass .needle { transform-origin: 54px 54px; transform-box: view-box; }
+.mapctl { position: absolute; z-index: 6; right: clamp(16px, 3vw, 44px); bottom: 96px; display: grid; gap: 10px; }
+.mapctl button { width: 44px; height: 44px; border-radius: 14px; background: var(--card); box-shadow: var(--shadow-sm); font: 700 22px/1 var(--sans); display: grid; place-items: center; }
+.mapctl .grp { display: grid; border-radius: 14px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.mapctl .grp button { border-radius: 0; box-shadow: none; }
+.mapctl .grp button + button { border-top: 1px solid var(--line); }
+.jtl { position: absolute; z-index: 6; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 90%, transparent); backdrop-filter: blur(10px); box-shadow: var(--shadow-sm); }
+.jtl ol { position: relative; display: flex; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.jtl ol::before { content: ""; position: absolute; left: 8px; right: 8px; top: 50%; height: 2px; margin-top: -1px; background: var(--line); }
+.jtl button { position: relative; width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; }
+.jtl button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--card); box-shadow: 0 0 0 2px var(--line); transition: transform .4s var(--spring), background .3s, box-shadow .3s; }
+.jtl button.done::before { background: var(--c); box-shadow: 0 0 0 2px var(--c); }
+.jtl button.on::before { transform: scale(1.5); background: var(--c); box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--c); }
+.jtl .yr { min-width: 11ch; font: 700 14px/1 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nav { transition: transform .7s var(--ease), opacity .4s; }
+/* clouds drift across the screen; mist sits low on the map */
+.journey { --cloud: rgba(255,255,255,.9); --mist: rgba(255,255,255,.75); }
+html[data-theme="night"] .journey { --cloud: rgba(190,208,238,.28); --mist: rgba(150,175,215,.22); }
+.j-clouds { position: absolute; inset: 0; z-index: 4; overflow: hidden; pointer-events: none; }
+.cloud { position: absolute; top: var(--t); left: 0; width: 260px; height: 90px; opacity: var(--o, .6); filter: blur(1.5px) drop-shadow(0 18px 18px rgba(19,35,58,.1));
+  transform: translateX(-340px) scale(var(--s, 1)); animation: drift var(--dur, 120s) linear var(--dl, 0s) infinite; will-change: transform; }
+.cloud i { position: absolute; background: var(--cloud); border-radius: 50%; }
+.cloud i:nth-child(1) { left: 0; bottom: 0; width: 260px; height: 48px; border-radius: 48px; }
+.cloud i:nth-child(2) { left: 40px; bottom: 18px; width: 96px; height: 72px; }
+.cloud i:nth-child(3) { left: 120px; bottom: 18px; width: 112px; height: 84px; }
+@keyframes drift { to { transform: translateX(calc(100vw + 340px)) scale(var(--s, 1)); } }
+.mist { position: absolute; width: var(--w, 900px); height: var(--h, 340px); left: var(--x); top: var(--y); z-index: 2; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--mist), transparent); filter: blur(14px); opacity: .8; animation: mistmove var(--dur, 26s) ease-in-out var(--dl, 0s) infinite alternate; }
+@keyframes mistmove { from { transform: translate3d(-90px, 0, 0) scale(1); opacity: .45; } to { transform: translate3d(110px, -30px, 0) scale(1.12); opacity: .9; } }
+.j-haze { position: absolute; inset: auto 0 0 0; height: 32%; z-index: 4; pointer-events: none; background: linear-gradient(to top, color-mix(in srgb, var(--land) 85%, transparent), transparent); }
+@media (prefers-reduced-motion: reduce) { .cloud, .mist { animation: none; } .cloud { transform: translateX(calc(var(--lx, 20) * 1vw)) scale(var(--s, 1)); } }
+@media (max-width: 860px) {
+  .j-track { height: calc(100svh * 5.4); }
+  .j-left { top: 70px; bottom: 76px; width: auto; right: 12px; left: 12px; }
+  .j-head h2 { font-size: 1.9rem; } .j-head p, .j-head .kicker { display: none; }
+  .jcard { border-radius: 22px; }
+  .jc-top { padding: 12px 16px; } .jc-bd { padding: 14px 16px; }
+  .jcard h3 { font-size: 22px; } .jcard .txt { font-size: 15px; }
+  .compass { width: 60px; height: 60px; top: 70px; } .mapctl { display: none; }
+  .jtl { bottom: 16px; padding: 8px 12px; } .jtl .yr { display: none; }
+}
+
+/* work: a 3D box of cards. The lid opens on scroll, cards rise out of their slots, hover lifts one, click pulls it out into a full case study. */
+.work { padding: 0; }
+.box-track { position: relative; height: 115vh; }
+.box-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.box-head { position: absolute; z-index: 3; top: clamp(64px, 8vh, 100px); left: 0; right: 0; padding-inline: 16px; text-align: center; pointer-events: none; }
+.box-head .sec-head { justify-items: center; margin: 0; }
+.box-head .sec-head h2 { max-width: none; font-size: clamp(1.9rem, 3.8vw, 3.4rem); }
+.box-stage.opened { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.box-stage.rotating, .box-stage.rotating * { cursor: grabbing !important; }
+.box-fit { position: absolute; left: 50%; top: 62%; width: 0; height: 0; perspective: 2400px; perspective-origin: 50% 25%; transform: scale(var(--bs, 1)); }
+.box3 { position: absolute; width: 800px; height: 260px; left: -400px; top: -60px; transform-style: preserve-3d; transform: rotateX(57deg) rotateZ(30deg); }
+.box3 .f { position: absolute; transform-origin: 50% 100%; box-sizing: border-box; }
+.box-floor { position: absolute; inset: 0; background: linear-gradient(135deg, #EFE0C2, #E6D2AB); box-shadow: inset 0 0 40px rgba(120,80,30,.18); }
+.box-floor::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 70% at 50% 50%, rgba(255,226,170,.8), rgba(255,200,130,.25) 55%, transparent 80%); opacity: 0; transition: opacity 2.2s var(--ease) .5s; }
+.box-stage.opened .box-floor::after { opacity: .7; }
+.box-shadow { position: absolute; inset: -50px -40px -40px -50px; transform: translateZ(-2px); background: rgba(90,60,20,.3); filter: blur(40px); border-radius: 40px; }
+.wall-i { background: linear-gradient(0deg, #E2CCA0, #EEDDBA); }
+.wall-o { background: linear-gradient(0deg, #DDC393, #EEDDBA); border-top: 4px solid #F6EAD0; display: grid; place-items: center; }
+.wall-o .brand { font: 700 30px/1 var(--sans); letter-spacing: .02em; color: rgba(150,110,52,.5); text-shadow: 0 1px 0 rgba(255,255,255,.55), 0 -1px 0 rgba(90,60,20,.35); white-space: nowrap; }
+.box-lid { background: linear-gradient(0deg, #EBD6AE, #F4E8CC); border: 4px solid #DCC08C; transition: transform 2.4s cubic-bezier(.65,0,.2,1) .1s, opacity .5s; }
+.box-lid::after { content: ""; position: absolute; inset: 24px; border: 1.5px dashed rgba(122,90,46,.35); border-radius: 8px; }
+.cur-open { position: fixed; left: 0; top: 0; z-index: 80; width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); font: 700 22px/1 var(--hand); letter-spacing: .02em; box-shadow: 0 10px 28px -8px rgba(19,35,58,.6); pointer-events: none; opacity: 0; scale: .4; transition: opacity .25s, scale .45s var(--spring); }
+.cur-open.show { opacity: 1; scale: 1; }
+@media (hover: hover) and (pointer: fine) { .wk.picked, .wk.picked *, .box3:not(.is-open), .box3:not(.is-open) * { cursor: none; } }
+.box3:not(.is-open) { outline: none; }
+@media (hover: none), (pointer: coarse) { .cur-open { display: none; } }
+.wk { transition: transform .7s cubic-bezier(.22,1,.36,1), box-shadow .6s, filter .6s; position: absolute; width: 176px; height: 240px; transform-origin: 50% 100%; padding: 16px; border-radius: 18px; border: 0; text-align: left; color: #fff; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: space-between; background: var(--bg); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 10px 22px -14px rgba(0,0,0,.45);
+  overflow: hidden; }
+.wk::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,.12), transparent 50%); pointer-events: none; }
+.wk.hov { filter: brightness(1.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), 0 0 28px var(--glow); }
+.wk-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.wk-ic { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.92); color: var(--c); display: grid; place-items: center; font: 800 15px/1 var(--sans); }
+.wk-tag { font: 600 12px/1 var(--sans); letter-spacing: .08em; opacity: .7; }
+.wk-hand { margin: 0 0 6px; font: 600 12px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.wk-main { font: 700 32px/.95 var(--sans); letter-spacing: -.045em; }
+.wk-sub { margin: 6px 0 0; font: 500 12px/1.3 var(--sans); opacity: .8; }
+.box-info { position: absolute; z-index: 3; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); display: flex; flex-direction: column; align-items: center; gap: 14px; padding-inline: 16px; pointer-events: none; }
+.box-info > * { pointer-events: auto; }
+.box-cap { margin: 0; min-height: 1.4em; font: 700 24px/1 var(--hand); color: var(--ink-2); text-align: center; }
+.bi-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0; padding: 0; list-style: none; }
+.bi-list button { display: inline-flex; gap: 8px; align-items: center; padding: 10px 16px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow-sm); font: 700 14px/1 var(--sans); transition: transform .4s var(--spring), background .3s; }
+.bi-list button b { color: var(--c); font-variant-numeric: tabular-nums; }
+.bi-list button.on, .bi-list button:hover { transform: translateY(-3px); background: color-mix(in srgb, var(--c) 18%, var(--card)); }
+
+/* case study overlay */
+.cs { position: fixed; z-index: 90; inset: 0; background: var(--paper); overflow-y: auto; overscroll-behavior: contain; visibility: hidden; clip-path: inset(50% 50% 50% 50% round 18px); }
+.cs.open { visibility: visible; }
+.cs-in { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--ease), transform .8s var(--ease); }
+.cs.ready .cs-in { opacity: 1; transform: none; }
+.cs-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 16px clamp(16px, 4vw, 48px) 12px; background: linear-gradient(var(--paper) 60%, transparent); }
+.cs-close, .cs-next { padding: 11px 16px; border-radius: 999px; font: 700 14px/1 var(--sans); }
+.cs-close { background: var(--ink); color: var(--paper); }
+.cs-next { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.cs-hero { padding: 6vh clamp(16px, 4vw, 48px) 4vh; max-width: 76rem; margin: 0 auto; }
+.cs-hero .k { display: inline-flex; align-items: center; gap: 10px; font: 700 13px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--coral); }
+.cs-hero .k i { width: 34px; height: 34px; border-radius: 10px; background: var(--c); color: #fff; display: grid; place-items: center; font-style: normal; }
+.cs-hero h2 { margin: 18px 0 14px; font: 800 clamp(2.8rem, 7vw, 6.4rem)/.92 var(--sans); letter-spacing: -.055em; max-width: 14ch; }
+.cs-hero .pitch { margin: 0; font-size: clamp(20px, 2vw, 27px); line-height: 1.3; color: var(--ink-2); max-width: 36ch; }
+.cs-body { background: var(--paper-2); padding: 8vh clamp(16px, 4vw, 48px) 12vh; }
+.cs-body > div { max-width: 60rem; margin: 0 auto; display: grid; gap: 6vh; }
+.cs-sec { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: 24px; }
+.cs-sec h3 { margin: 0; font: 700 26px/1.1 var(--hand); color: var(--coral); }
+.cs-sec p { margin: 0; font-size: 19px; line-height: 1.55; }
+.cs-tx { min-width: 0; }
+.cs-sec p + p, .cs-sec p + ul, .cs-sec ul + p { margin-top: 14px; }
+.cs-sec ul:not(.cs-res) { margin: 0; padding-left: 1.2em; font-size: 19px; line-height: 1.55; display: grid; gap: 10px; }
+.cs-rl { margin-top: 22px !important; }
+.cs-sec li::marker { color: var(--c); }
+.cs-sec a { color: #C93A1E; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.cs-sec a:hover { color: var(--ink); }
+html[data-theme="night"] .cs-sec a { color: #FFB59E; }
+.cs-hero h2.long { font-size: clamp(2rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -.045em; max-width: 22ch; }
+.cs-polas { position: relative; width: 100%; aspect-ratio: 960 / 690; margin-top: 2vh; }
+.pola { position: absolute; left: var(--x); top: var(--y); width: var(--w); z-index: var(--z); padding: 9px 9px 30px; border-radius: 4px; background: #FFFEFA; box-shadow: 0 14px 26px -12px rgba(19,35,58,.45), 0 2px 5px rgba(19,35,58,.15); transform: rotate(var(--r)); transition: transform .6s var(--spring), box-shadow .4s; }
+.pola::before { content: ""; position: absolute; top: -9px; left: 50%; width: 54px; height: 18px; translate: -50% 0; rotate: calc(var(--r) * -1.5); background: color-mix(in srgb, var(--c) 45%, #fff); opacity: .75; border-radius: 2px; }
+.pola:hover { transform: rotate(0deg) scale(1.05); box-shadow: 0 26px 36px -14px rgba(19,35,58,.5), 0 2px 6px rgba(19,35,58,.15); z-index: 10; }
+.pola img { display: block; width: 100%; height: auto; border-radius: 2px; }
+@media (max-width: 640px) { .pola { padding: 6px 6px 20px; } }
+.cs-res { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.cs-res li { padding: 22px; border-radius: 20px; background: color-mix(in srgb, var(--c) 22%, var(--card)); }
+.cs-res b { display: block; font: 800 clamp(2rem, 4vw, 3.4rem)/1 var(--sans); letter-spacing: -.045em; }
+.cs-res span { display: block; margin-top: 8px; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 860px) {
+  .wall-o .brand { font-size: 28px; }
+  .cs-sec { grid-template-columns: 1fr; gap: 8px; }
+  .box-head .sec-head p:not(.kicker) { display: none; }
+  .box-fit { top: 58%; }
+}
+
+/* mood: turntable */
+.desk-sec { background: var(--paper-2); }
+.tt-wrap { display: grid; place-items: center; padding: 8px 0 24px; }
+.tt { display: block; width: min(368px, 70vw); padding: 0; border: 0; background: none; cursor: pointer; filter: drop-shadow(0 22px 26px rgba(19,35,58,.28)); -webkit-tap-highlight-color: transparent; }
+.tt svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tt .rec { transform-origin: 170px 165px; animation: spin 3.2s linear infinite paused; }
+.tt[aria-pressed="true"] .rec { animation-play-state: running; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.tt .arm { transform-origin: 340px 62px; transform: rotate(0deg); transition: transform 1.3s var(--ease); }
+.tt[aria-pressed="true"] .arm { transform: rotate(47deg); }
+.tt .led { fill: #5E6B80; transition: fill .4s; } .tt[aria-pressed="true"] .led { fill: #FF6B4A; filter: drop-shadow(0 0 4px #FF6B4A); }
+.tt:focus-visible { outline: 3px solid var(--coral); outline-offset: 8px; border-radius: 40px; }
+.tt-yt { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; overflow: hidden; }
+.tt-cap a { color: var(--coral); text-underline-offset: 3px; }
+.tt-cap { margin-top: 22px; text-align: center; font: 700 20px/1.2 var(--hand); color: var(--ink-2); }
+
+/* testimonials: two rows of taped sticky notes drifting in opposite directions */
+.notes { background: var(--paper); overflow: hidden; }
+.notes .sec-head { padding-inline: clamp(16px, 4vw, 48px); max-width: 76rem; margin-inline: auto; }
+.tn-row { overflow: hidden; padding: 26px 0 30px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.tn-track { display: flex; gap: 28px; width: max-content; animation: tnL var(--dur, 70s) linear infinite; will-change: transform; }
+.tn-row.rev .tn-track { animation-direction: reverse; }
+.tn-row:hover .tn-track, .tn-row:focus-within .tn-track { animation-play-state: paused; }
+@keyframes tnL { to { transform: translateX(-50%); } }
+.tn { position: relative; width: 340px; min-height: 250px; flex: none; padding: 30px 28px 24px; border-radius: 6px 6px 26px 6px; background: var(--bg); color: #13233A; text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 20px; rotate: var(--r, 0deg); box-shadow: 0 24px 30px -22px rgba(19,35,58,.45), 0 2px 6px rgba(19,35,58,.08);
+  outline: 3px solid transparent; transition: rotate .5s var(--spring), outline-color .3s, transform .5s var(--spring); }
+.tn::before { content: ""; position: absolute; top: -13px; left: 50%; width: 92px; height: 28px; margin-left: -46px; background: rgba(255,255,255,.55); box-shadow: 0 1px 2px rgba(19,35,58,.06); rotate: var(--t, 0deg); }
+.tn:hover, .tn:focus-visible { rotate: 0deg; transform: translateY(-6px); outline-color: var(--coral); }
+.tn q { quotes: none; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; font-size: 20px; line-height: 1.35; letter-spacing: -.015em; }
+.tn .by { display: flex; align-items: center; gap: 12px; }
+.tn .av { width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; background: var(--a); color: #13233A; font: 800 16px/1 var(--sans);
+  border: 3px solid #fff; box-shadow: 0 6px 12px -6px rgba(19,35,58,.4); }
+.tn b { display: block; font: 800 16px/1.2 var(--sans); }
+.tn .by b { flex: 1; min-width: 0; }
+.tn .av { overflow: hidden; }
+.tn .av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tn .li { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; background: rgba(255,255,255,.75); color: #0A66C2; transition: transform .4s var(--spring), background .3s, color .3s; }
+.tn .li svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tn .li:hover, .tn .li:focus-visible { background: #0A66C2; color: #fff; transform: scale(1.12) rotate(-6deg); }
+.tn .ex { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.7); display: grid; place-items: center; }
+.tn .ex svg { width: 14px; height: 14px; fill: none; stroke: #13233A; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tm { position: fixed; z-index: 95; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(19,35,58,.5); backdrop-filter: blur(6px); opacity: 0; visibility: hidden; transition: opacity .4s var(--ease), visibility .4s; }
+.tm.open { opacity: 1; visibility: visible; }
+#tmIn { width: min(520px, 100%); }
+.tm .tn { max-height: 86svh; overflow-y: auto; scrollbar-width: thin; width: 100%; min-height: 0; rotate: -1deg; transform: translateY(20px) scale(.96); transition: transform .6s var(--spring); cursor: default; }
+.tm.open .tn { transform: none; }
+.tm .tn q { display: block; -webkit-line-clamp: unset; font-size: 19px; line-height: 1.45; }
+.tm .tn:hover { rotate: -1deg; transform: none; outline-color: transparent; }
+.tm .close { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: var(--card); font-size: 22px; box-shadow: var(--shadow-sm); }
+@media (max-width: 600px) { .tn { width: 290px; } .tn q { font-size: 18px; } }
+@media (prefers-reduced-motion: reduce) { .tn-row { overflow-x: auto; } .tn-track { animation: none; } }
+
+/* hello */
+.hello { position: relative; overflow: hidden; text-align: center; padding: clamp(110px, 18vh, 170px) 0 190px; isolation: isolate; color: #13233A; background: linear-gradient(180deg, #8EC5F0 0%, #CFE7F7 55%, #EAF4FB 100%); transition: background-color 1.2s; }
+html[data-theme="night"] .hello { color: #F6EEDD; background: linear-gradient(180deg, #0B1633 0%, #13233A 60%, #1B2B45 100%); }
+.hello .tear { position: absolute; z-index: 3; left: 0; right: 0; top: -1px; height: 46px; background: var(--paper); }
+.hello .sky { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.hello .stars { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s; }
+.hello .stars i { position: absolute; width: var(--z); height: var(--z); border-radius: 50%; background: #fff; box-shadow: 0 0 calc(var(--z) * 3) rgba(255,255,255,.9); animation: glitter var(--t) ease-in-out var(--dl) infinite; }
+.hello .stars i.sp { width: calc(var(--z) * 7); height: calc(var(--z) * 7); border-radius: 0; background: radial-gradient(circle, #fff 0 8%, transparent 9%), linear-gradient(#fff, #fff) center/1px 100% no-repeat, linear-gradient(#fff, #fff) center/100% 1px no-repeat; box-shadow: none; filter: drop-shadow(0 0 4px #fff); }
+.hello .moon, .hello .sun { position: absolute; right: 8%; top: 150px; width: 96px; height: 96px; border-radius: 50%; opacity: 0; transition: opacity 1.4s, transform 1.4s var(--ease); }
+.hello .moon { transform: translateY(40px) scale(.8); background: radial-gradient(circle at 35% 35%, #FFFBEA, #F1E3B5 60%, #D9C48A); box-shadow: 0 0 50px 14px rgba(255,240,200,.4), 0 0 150px 40px rgba(255,240,200,.16), inset -12px -8px 0 rgba(180,160,100,.25); }
+.hello .moon::before { content: ""; position: absolute; left: 24px; top: 26px; width: 16px; height: 16px; border-radius: 50%; background: rgba(170,150,95,.3); box-shadow: 34px 22px 0 -3px rgba(170,150,95,.28), 8px 44px 0 -2px rgba(170,150,95,.25); }
+.hello .sun { background: radial-gradient(circle at 40% 38%, #FFF6B8, #FFD23F 62%, #FFB627); box-shadow: 0 0 40px 12px rgba(255,214,90,.6), 0 0 140px 50px rgba(255,214,90,.28); }
+.hello .sun::before { content: ""; position: absolute; inset: -34px; border-radius: 50%; background: repeating-conic-gradient(from 0deg, rgba(255,214,90,.55) 0 5deg, transparent 5deg 20deg); -webkit-mask-image: radial-gradient(circle, transparent 56%, #000 58%, #000 70%, transparent 72%); mask-image: radial-gradient(circle, transparent 56%, #000 58%, #000 70%, transparent 72%); animation: spin 60s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+html:not([data-theme="night"]) .hello .sun { opacity: 1; }
+html[data-theme="night"] .hello .moon { opacity: 1; transform: none; }
+html[data-theme="night"] .hello .sun { transform: translateY(40px) scale(.8); }
+.hello .birds { position: absolute; inset: 0; opacity: 1; transition: opacity 1s; }
+html[data-theme="night"] .hello .birds { opacity: 0; }
+.bd { position: absolute; left: 0; width: var(--w, 30px); height: auto; fill: none; stroke: #2B3F5C; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; top: var(--y); animation: fly var(--d) linear var(--dl) infinite, flap .5s ease-in-out infinite alternate; transform-origin: 50% 70%; }
+.bd path { transform-origin: 50% 70%; }
+.b1 { --y: 24%; --w: 52px; --d: 26s; --dl: -4s; } .b2 { --y: 34%; --w: 38px; --d: 32s; --dl: -12s; } .b3 { --y: 14%; --w: 44px; --d: 29s; --dl: -20s; } .b4 { --y: 44%; --w: 32px; --d: 36s; --dl: -26s; } .b5 { --y: 18%; --w: 36px; --d: 33s; --dl: -8s; }
+@keyframes fly { from { translate: -80px 0; } 50% { translate: 50vw -24px; } to { translate: calc(100vw + 40px) 6px; } }
+@keyframes flap { from { scale: 1 1; } to { scale: 1 .45; } }
+html[data-theme="night"] .hello .stars { opacity: 1; }
+.hello .cl { position: absolute; border-radius: 50%; background: rgba(255,255,255,.85); filter: blur(2px); box-shadow: 120px 40px 0 30px rgba(255,255,255,.85), -130px 50px 0 20px rgba(255,255,255,.85), 260px 70px 0 10px rgba(255,255,255,.8), -270px 80px 0 0 rgba(255,255,255,.8); transition: background .8s, box-shadow .8s; animation: cdrift var(--t, 40s) ease-in-out infinite alternate; }
+html[data-theme="night"] .hello .cl { background: rgba(90,110,150,.22); box-shadow: 120px 40px 0 30px rgba(90,110,150,.22), -130px 50px 0 20px rgba(90,110,150,.22), 260px 70px 0 10px rgba(90,110,150,.2), -270px 80px 0 0 rgba(90,110,150,.2); }
+.hello .c1 { width: 260px; height: 150px; left: 6%; bottom: -40px; --t: 46s; } .hello .c2 { width: 300px; height: 170px; right: 4%; bottom: -60px; --t: 38s; animation-direction: alternate-reverse; } .hello .c3 { width: 200px; height: 110px; left: 44%; bottom: -50px; --t: 52s; }
+@keyframes cdrift { to { transform: translateX(46px); } }
+.hello h2 { margin: 0 auto 18px; font-size: clamp(2.6rem, 8vw, 7.4rem); line-height: .94; letter-spacing: -.05em; font-weight: 800; max-width: 12ch; text-wrap: balance; }
+.hello .sub { margin: 0 auto; max-width: 30ch; font-size: clamp(19px, 1.8vw, 26px); line-height: 1.3; opacity: .85; }
+.panel { position: relative; width: min(66rem, calc(100% - 32px)); margin: clamp(32px, 6vh, 56px) auto 0; padding: 22px 20px 34px; border-radius: 32px; border: 1px solid rgba(19,35,58,.14); backdrop-filter: blur(10px);
+  background-color: rgba(255,255,255,.6); background-image: linear-gradient(rgba(19,35,58,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(19,35,58,.06) 1px, transparent 1px); background-size: 30px 30px; box-shadow: 0 30px 60px -30px rgba(19,35,58,.35); }
+html[data-theme="night"] .panel { background-color: rgba(18,26,40,.72); border-color: rgba(255,255,255,.1); background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); }
+.psst { margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; font: 700 14px/1 var(--sans); opacity: .75; }
+.psst kbd, .kc kbd { font: 700 12px/1 var(--sans); padding: 6px 8px; border-radius: 7px; background: rgba(19,35,58,.1); }
+html[data-theme="night"] .psst kbd { background: rgba(255,255,255,.12); }
+.links { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 24px clamp(18px, 4vw, 56px); margin: 0; padding: 26px 0 18px; }
+.kc { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 230px; }
+.kc.above { flex-direction: column-reverse; }
+.key { display: block; text-decoration: none; }
+.sock { display: block; padding: 7px 7px 11px; border-radius: 32px; background: rgba(19,35,58,.12); box-shadow: inset 0 3px 6px rgba(0,0,0,.18); }
+html[data-theme="night"] .sock { background: rgba(0,0,0,.42); }
+.cap { position: relative; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 24px; color: #fff; transform: translateY(0); transition: transform .25s var(--spring), box-shadow .25s;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 78%, #fff) 0%, var(--c) 100%);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 72%, #000), 0 9px 0 color-mix(in srgb, var(--c) 52%, #000), 0 16px 18px -4px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.35); }
+.key:hover .cap, .key:focus-visible .cap { transform: translateY(-4px); box-shadow: 0 9px 0 color-mix(in srgb, var(--c) 72%, #000), 0 13px 0 color-mix(in srgb, var(--c) 52%, #000), 0 22px 22px -4px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.35); }
+.key:active .cap { transform: translateY(6px); box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 72%, #000), 0 2px 0 color-mix(in srgb, var(--c) 52%, #000), 0 4px 6px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.35); }
+.cap .ic { display: grid; place-items: center; }
+.cap svg { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+#cv .cap { color: #13233A; }
+.cap kbd { position: absolute; left: 9px; top: 7px; padding: 0; background: none !important; font-size: 11px; color: rgba(255,255,255,.85); }
+#cv .cap kbd { color: rgba(19,35,58,.7); }
+.cp { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 18px; line-height: 1.25; }
+.kc.below .cp { flex-direction: column; } .kc.below .ar { order: -1; } .kc.above .ar { order: 2; transform: scaleY(-1); }
+.ar { width: 30px; height: 42px; overflow: visible; stroke: #E4573D; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.em { display: inline-flex; align-items: center; gap: 6px; font: 700 13px/1 var(--sans); white-space: nowrap; }
+.em button { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; flex: none; }
+.em button:hover { background: rgba(19,35,58,.1); } .em button.ok { color: #2E8B57; }
+.em svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 700px) { .links { min-height: 0; } .kc, .kc.above { flex-direction: column; width: 140px; } .kc .ar { display: none; } .cap { width: 76px; height: 76px; } .cap svg { width: 36px; height: 36px; } }
+@media (prefers-reduced-motion: reduce) { .hello .cl, .hello .stars i, .hello .sun::before, .bd { animation: none; } .bd { display: none; } }
+@media (max-width: 700px) { .hello .moon, .hello .sun { width: 64px; height: 64px; top: 120px; right: 6%; } }
+footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 18px/1 var(--hand); padding-bottom: 40px; }
+
+@media (max-width: 860px) {
+  .nav a { padding: 0 11px; font-size: 13.5px; height: 40px; }
+  .nav a[data-hide-m] { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  .rv { opacity: 1; transform: none; } .hl::before { clip-path: none; }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="name" href="#top">Utkarsh Pandey</a>
+  <div class="tools"><button class="toggle" id="music" aria-label="Toggle background music" aria-pressed="true">Music on</button><button class="toggle" id="sound" aria-label="Toggle click sound" aria-pressed="true">Sound on</button><button class="toggle" id="theme" aria-label="Toggle night and day">Night</button></div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Sections">
+  <a href="#journey" data-go="journey">Journey</a>
+  <a href="#work" data-go="work">Work</a>
+  <a href="#desk" data-go="desk" data-hide-m>Mood</a>
+  <a href="#hello" data-go="hello">Contact</a>
+  <a href="https://drive.google.com/file/d/1Crtf2Fz1CyeugYfEoRdtHiZme8HRhQw_/view?usp=sharing" target="_blank" rel="noopener" class="cta">Resume</a>
+</nav>
+
+<main id="top">
+  <!-- HERO: replace the placeholder headline with your own positioning line -->
+  <section class="hero">
+    <div class="hero-img"><img src="assets/hero/lucknow.jpg?v=3" alt="Utkarsh sitting in a Lucknow park, looking at the Rumi Darwaza" fetchpriority="high"><img class="night" src="assets/hero/lucknow-night.jpg?v=3" alt="" aria-hidden="true"></div>
+    <div class="wrap on" id="heroWrap">
+      <p class="kicker">hi, i'm utkarsh pandey</p>
+      <h1>
+        <span class="ln"><span style="--dl:.2s">Turning &ldquo;who are you?&rdquo;</span></span>
+        <span class="ln"><span style="--dl:.4s">into &ldquo;<span class="hl b-sun">take my money</span>.&rdquo;</span></span>
+      </h1>
+      <p class="lead" style="animation: rise 1.2s var(--ease) .7s both">The story from one small beautiful city to the world.</p>
+      </div>
+    <span class="hint">scroll to walk the path &darr;</span>
+  </section>
+
+  <section class="intro" id="intro">
+    <div class="wrap intro-grid">
+      <figure class="intro-ph rv"><button type="button" class="pola" style="--c:#FFD23F;--r:-4deg" data-src="assets/gallery/desert-quad.jpg" data-alt="Utkarsh on a black quad bike in the desert, under a deep blue sky" aria-label="Open photo: Utkarsh on a quad bike in the desert"><img src="assets/gallery/desert-quad.jpg" alt="Utkarsh on a black quad bike in the desert, under a deep blue sky" width="900" height="1200" loading="lazy"></button></figure>
+      <div class="intro-tx">
+        <h2 class="rv">I help companies stay visible, on track and <span class="hl b-sun">ahead.</span></h2>
+        <p class="lead rv" style="--d:.12s">A growth marketer in India with nine years across brand, performance and lifecycle, who helped drive $70M in revenue at my last team, and yes, I counted.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story" id="story">
+    <div class="wrap story-grid">
+      <div class="story-tx">
+      <p class="big rv">It started with <em>student activation projects</em> across Poland and Georgia.</p>
+      <p class="big rv" style="--d:.1s">Since then I've built <span class="hl b-sky">growth engines</span> that keep brands seen and pipelines full.</p>
+      </div>
+      <figure class="intro-ph intro-ph2 rv" style="--d:.2s"><button type="button" class="pola pola2" style="--c:#7FC8E8;--r:3deg" data-src="assets/gallery/nls-talk.jpg" data-alt="Utkarsh speaking to a hall of students at NLS 23, hosted by AIESEC in Delhi University" aria-label="Open photo: Utkarsh speaking at NLS 23"><img src="assets/gallery/nls-talk.jpg" alt="Utkarsh speaking to a hall of students at NLS 23, hosted by AIESEC in Delhi University" width="1100" height="733" loading="lazy"></button></figure>
+    </div>
+  </section>
+
+  <!-- JOURNEY: a pinned map. Edit the stops in the JD array in the script below. -->
+  <section class="journey" id="journey" aria-label="The journey">
+    <div class="j-track" id="jTrack">
+      <div class="j-pin" id="jPin">
+        <div class="j-world" id="jWorld">
+          <svg id="jArt" viewBox="0 0 4800 3200" aria-hidden="true"></svg>
+          <div id="jMarks"></div>
+          <div class="j-me" id="jMe"><svg viewBox="0 0 44 72" aria-hidden="true"><g id="jFlip"><g class="bob">
+            <rect x="2" y="14" width="5" height="12" rx="2" fill="#13233A"/><rect x="37" y="14" width="5" height="12" rx="2" fill="#13233A"/><rect x="2" y="48" width="5" height="12" rx="2" fill="#13233A"/><rect x="37" y="48" width="5" height="12" rx="2" fill="#13233A"/>
+            <rect x="5" y="4" width="34" height="64" rx="8" fill="#E8553F"/><rect x="5" y="4" width="34" height="64" rx="8" fill="none" stroke="#B93A28" stroke-width="1.5"/>
+            <rect x="9" y="6" width="7" height="4" rx="2" fill="#FFE9A8"/><rect x="28" y="6" width="7" height="4" rx="2" fill="#FFE9A8"/>
+            <path d="M10 22Q22 17 34 22L32 32H12Z" fill="#2F5FB8"/><rect x="10" y="32" width="24" height="17" rx="3" fill="#D9442F"/><path d="M12 49H32L34 56Q22 60 10 56Z" fill="#2F5FB8"/>
+            <rect x="12" y="62" width="6" height="3" rx="1.5" fill="#B93A28"/><rect x="26" y="62" width="6" height="3" rx="1.5" fill="#B93A28"/></g></g></svg></div>
+        </div>
+        <div class="j-clouds" aria-hidden="true">
+          <div class="cloud" style="--t:9%;--s:1;--o:.6;--dur:110s;--dl:-30s;--lx:30"><i></i><i></i><i></i></div>
+          <div class="cloud" style="--t:34%;--s:1.5;--o:.45;--dur:160s;--dl:-95s;--lx:60"><i></i><i></i><i></i></div>
+          <div class="cloud" style="--t:62%;--s:.8;--o:.5;--dur:95s;--dl:-10s;--lx:15"><i></i><i></i><i></i></div>
+          <div class="cloud" style="--t:82%;--s:1.2;--o:.4;--dur:140s;--dl:-70s;--lx:75"><i></i><i></i><i></i></div>
+          <div class="j-haze"></div>
+        </div>
+        <div class="j-left">
+          <div class="j-head"><p class="kicker">the path</p><h2>How I got <span class="hl b-coral on">here</span></h2><p>Six stops across three countries. Scroll to walk the path.</p></div>
+          <article class="jcard" id="jCard" aria-live="polite"><div class="jc-in" id="jcIn"></div></article>
+        </div>
+        <div class="compass" aria-hidden="true"><svg viewBox="0 0 108 108"><circle class="ring" cx="54" cy="54" r="50"/><circle cx="54" cy="54" r="42" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="1.5 4.1" opacity=".5"/><text x="54" y="20">N</text><text x="54" y="96">S</text><text x="91" y="58">E</text><text x="17" y="58">W</text><g class="needle" id="jNeedle"><path d="M54 26 L60 54 L54 58 L48 54Z" fill="#FF6B4A"/><path d="M54 82 L60 54 L54 50 L48 54Z" fill="#13233A"/><circle cx="54" cy="54" r="3.5" fill="#FFFDF7" stroke="#13233A"/></g></svg></div>
+        <div class="mapctl" aria-label="Map controls">
+          <button id="jRe" type="button" aria-label="Recenter">&#9678;</button>
+          <div class="grp"><button id="jIn" type="button" aria-label="Zoom in">+</button><button id="jOut" type="button" aria-label="Zoom out">&minus;</button></div>
+        </div>
+        <nav class="jtl" aria-label="Years"><ol id="jDots"></ol><span class="yr" id="jYr"></span></nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK: the box. Edit the cards in the WORK array in the script below. -->
+  <section class="work" id="work" aria-label="Selected work">
+    <div class="box-track" id="boxTrack">
+      <div class="box-stage" id="boxStage">
+        <div class="box-head"><div class="sec-head"><p class="kicker">pick a card</p><h2>Campaigns that <span class="hl b-sun on">moved</span> numbers</h2><p>Open the box and pick a card.</p></div></div>
+        <div class="box-fit" id="boxFit"><div class="box3" id="box3"><div class="box-shadow"></div><div class="box-floor"></div></div></div>
+        <div class="box-info"><p class="box-cap" id="boxCap">&nbsp;</p><ol class="bi-list" id="biList"></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cs" id="cs" role="dialog" aria-modal="true" aria-label="Case study" data-lenis-prevent>
+    <div class="cs-bar"><button class="cs-close" id="csClose" type="button">&larr; Back to the box</button><button class="cs-next" id="csNext" type="button">Next card &rarr;</button></div>
+    <div class="cs-in" id="csIn"></div>
+  </div>
+
+  <section class="desk-sec" id="desk">
+    <div class="wrap">
+      <div class="sec-head rv"><p class="kicker">right now</p><h2>A/B testing my <span class="hl b-lilac">mood</span></h2><p>Unhurried, curious and usually humming something.</p></div>
+      <div class="tt-wrap rv">
+        <button class="tt" id="tt" type="button" aria-pressed="false" aria-label="Turntable. Plays Bollywood Forever.">
+          <svg viewBox="0 0 400 330" aria-hidden="true" focusable="false">
+            <rect x="8" y="8" width="384" height="314" rx="38" fill="#2A3B57"/><rect x="8" y="8" width="384" height="314" rx="38" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="3"/>
+            <circle cx="170" cy="165" r="142" fill="#1B2A43"/><circle cx="170" cy="165" r="136" fill="#C9D2DF"/>
+            <g class="rec">
+              <circle cx="170" cy="165" r="128" fill="#0F1624"/>
+              <g fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.2"><circle cx="170" cy="165" r="118"/><circle cx="170" cy="165" r="108"/><circle cx="170" cy="165" r="98"/><circle cx="170" cy="165" r="88"/><circle cx="170" cy="165" r="78"/><circle cx="170" cy="165" r="68"/></g>
+              <path d="M170 165L170 37A128 128 0 0 1 238 56Z" fill="rgba(255,255,255,.07)"/><path d="M170 165L170 293A128 128 0 0 1 102 274Z" fill="rgba(255,255,255,.07)"/>
+              <circle cx="170" cy="165" r="44" fill="#FF6B4A"/><circle cx="170" cy="165" r="44" fill="none" stroke="rgba(19,35,58,.25)" stroke-width="2"/>
+              <path d="M146 158h48M150 170h40" stroke="rgba(19,35,58,.4)" stroke-width="3" stroke-linecap="round"/><circle cx="170" cy="165" r="5" fill="#E8EDF5"/>
+            </g>
+            <circle cx="170" cy="165" r="3" fill="#13233A"/>
+            <circle cx="340" cy="62" r="24" fill="#3A4E70"/><circle cx="340" cy="62" r="14" fill="#C9D2DF"/><circle cx="340" cy="62" r="5" fill="#13233A"/>
+            <g class="arm"><path d="M340 62V176" stroke="#E8EDF5" stroke-width="7" stroke-linecap="round"/><rect x="330" y="170" width="20" height="30" rx="5" fill="#FFD23F"/><rect x="336" y="196" width="8" height="6" rx="2" fill="#13233A"/><circle cx="340" cy="62" r="9" fill="#E8EDF5"/></g>
+            <circle class="led" cx="348" cy="296" r="6"/><rect x="302" y="291" width="30" height="10" rx="5" fill="#13233A" opacity=".5"/>
+          </svg>
+        </button>
+        <p class="tt-cap" id="ttCap">&nbsp;</p>
+        <div class="tt-yt" aria-hidden="true"><div id="ttYT"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS: edit the entries in the TESTI array in the script below. -->
+  <section class="notes" id="notes" aria-label="Kind words">
+    <div class="sec-head rv"><p class="kicker">kind words</p><h2>What people <span class="hl b-lilac">say</span></h2><p>From teammates, managers and partners I've worked with.</p></div>
+    <div class="tn-row" id="tnA"><div class="tn-track"></div></div>
+  </section>
+  <div class="tm" id="tm" role="dialog" aria-modal="true" aria-label="Testimonial" data-lenis-prevent><button class="close" id="tmX" type="button" aria-label="Close">&times;</button><div id="tmIn"></div></div>
+
+  <section class="hello" id="hello">
+    <span class="tear" aria-hidden="true" style="clip-path: polygon(0% 100%, 1.8% 55%, 4.2% 75%, 6.1% 55%, 7.5% 55%, 9.4% 55%, 11.7% 30%, 13.5% 45%, 14.9% 40%, 16.9% 55%, 19.5% 75%, 21.6% 55%, 23.7% 55%, 25.0% 55%, 26.3% 30%, 27.7% 45%, 29.8% 75%, 31.4% 55%, 33.8% 55%, 35.3% 60%, 37.2% 40%, 38.5% 40%, 40.1% 55%, 42.7% 30%, 44.9% 60%, 47.2% 55%, 48.8% 30%, 50.8% 30%, 52.5% 60%, 54.3% 30%, 56.7% 30%, 58.2% 30%, 60.0% 40%, 61.8% 30%, 63.8% 45%, 66.1% 60%, 67.7% 60%, 69.4% 75%, 71.7% 30%, 73.0% 40%, 74.4% 30%, 76.2% 75%, 77.7% 55%, 79.2% 55%, 80.6% 40%, 82.9% 75%, 85.0% 30%, 86.7% 45%, 87.9% 55%, 89.6% 30%, 91.1% 75%, 93.7% 55%, 95.8% 30%, 97.0% 45%, 98.5% 60%, 99.7% 55%, 100.0% 60%, 100% 100%)"></span>
+    <span class="sky" aria-hidden="true"><i class="stars"></i><i class="moon"></i><i class="sun"></i><span class="birds"><svg class="bd b1" viewBox="0 0 26 12"><path d="M1 8Q7 0 13 7Q19 0 25 8"/></svg><svg class="bd b2" viewBox="0 0 26 12"><path d="M1 8Q7 0 13 7Q19 0 25 8"/></svg><svg class="bd b3" viewBox="0 0 26 12"><path d="M1 8Q7 0 13 7Q19 0 25 8"/></svg><svg class="bd b4" viewBox="0 0 26 12"><path d="M1 8Q7 0 13 7Q19 0 25 8"/></svg><svg class="bd b5" viewBox="0 0 26 12"><path d="M1 8Q7 0 13 7Q19 0 25 8"/></svg></span><i class="cl c1"></i><i class="cl c2"></i><i class="cl c3"></i></span>
+    <div class="wrap">
+      <h2 class="rv">Let's build something that <span class="hl b-sun">everyone</span> would love.</h2>
+      <p class="sub rv" style="--d:.1s">Say hi and let's connect.</p>
+      <div class="panel rv" style="--d:.15s">
+        <p class="psst">psst, these work on your keyboard too: <kbd>M</kbd><kbd>L</kbd><kbd>R</kbd></p>
+        <div class="links">
+          <div class="kc below"><a  class="key primary" href="mailto:pandeyutkarsh200@gmail.com"  style="--c:#E24B3B"><span class="sock"><span class="cap"><i class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg></i><kbd>M</kbd></span></span><span class="sr">Mail</span></a><p class="cp"><svg class="ar" viewBox="0 0 28 40" aria-hidden="true"><path d="M20 38C6 30 4 16 14 5M14 5l-7 8M14 5l8 6" fill="none"/></svg>Roles, projects, or just hi.<span class="em"><span>pandeyutkarsh200@gmail.com</span><button type="button" id="copyMail" aria-label="Copy email address"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg></button></span></p></div>
+          <div class="kc below"><a id="li"  class="key" href="https://www.linkedin.com/in/utkarsh-pandey20/" target="_blank" rel="noopener" style="--c:#2F7FD8"><span class="sock"><span class="cap"><i class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 10.5V16M8 7.8v.1M12 16v-3.2a2.3 2.3 0 0 1 4.6 0V16M12 10.5V16"/></svg></i><kbd>L</kbd></span></span><span class="sr">LinkedIn</span></a><p class="cp"><svg class="ar" viewBox="0 0 28 40" aria-hidden="true"><path d="M20 38C6 30 4 16 14 5M14 5l-7 8M14 5l8 6" fill="none"/></svg>The work, and what I learned doing it.</p></div>
+          <div class="kc below"><a id="cv"  class="key" href="https://drive.google.com/file/d/1Crtf2Fz1CyeugYfEoRdtHiZme8HRhQw_/view?usp=sharing" target="_blank" rel="noopener" style="--c:#F2B531"><span class="sock"><span class="cap"><i class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 13h5M10 16.5h5"/></svg></i><kbd>R</kbd></span></span><span class="sr">Resume</span></a><p class="cp"><svg class="ar" viewBox="0 0 28 40" aria-hidden="true"><path d="M20 38C6 30 4 16 14 5M14 5l-7 8M14 5l8 6" fill="none"/></svg>My resume, one click away.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>made by hand &middot; <span id="yr"></span></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(function () {
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var store = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  $('#yr').textContent = new Date().getFullYear();
+
+  // theme: saved choice, else system preference
+  var root = document.documentElement, btn = $('#theme');
+  function setTheme(t) { root.setAttribute('data-theme', t); btn.textContent = t === 'night' ? 'Day' : 'Night'; store.set('theme', t); }
+  setTheme(store.get('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day'));
+  btn.addEventListener('click', function () { setTheme(root.getAttribute('data-theme') === 'night' ? 'day' : 'night'); });
+
+  // click sound: a soft synthesized tick on any press, no audio file. Remembers a mute choice.
+  var AC = window.AudioContext || window.webkitAudioContext, actx = null, soundOn = store.get('sound') !== 'off', lastTick = 0, sbtn = $('#sound');
+  function paintSound() { sbtn.textContent = soundOn ? 'Sound on' : 'Sound off'; sbtn.setAttribute('aria-pressed', String(soundOn)); }
+  function tick() {
+    if (!soundOn || !AC) return; var now = performance.now(); if (now - lastTick < 40) return; lastTick = now;
+    try {
+      actx = actx || new AC(); if (actx.state === 'suspended') actx.resume();
+      var t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain(), f = 520 + Math.random() * 90;
+      o.type = 'sine'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * .38, t + .07);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.13, t + .004); g.gain.exponentialRampToValueAtTime(.0001, t + .09);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + .1);
+    } catch (e) {}
+  }
+  paintSound();
+  sbtn.addEventListener('click', function (e) { e.stopPropagation(); soundOn = !soundOn; store.set('sound', soundOn ? 'on' : 'off'); paintSound(); if (soundOn) tick(); });
+  document.addEventListener('pointerdown', function (e) { if (e.target.closest('#sound, #music')) return; tick(); }, true);
+
+  // background music: a generated, laid-back groove (no audio file). Browsers block sound until the first
+  // tap/click/key, so it starts the moment the visitor first interacts. A fade-in keeps it gentle.
+  var mus = { on: store.get('music') !== 'off', hold: false, run: false, step: 0, next: 0, timer: null, master: null, fx: null, noise: null }, mbtn = $('#music');
+  var BPM = 104, SIXT = 60 / BPM / 4;
+  var CHORDS = [[60, 64, 67, 71], [57, 60, 64, 67], [57, 60, 65, 69], [59, 62, 64, 67]], BASS = [48, 45, 41, 43];
+  var ARP = [0, -1, 2, -1, 3, -1, 2, -1, 1, -1, 2, -1, 3, -1, 4, -1];
+  function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  function paintMusic() { mbtn.textContent = mus.on ? 'Music on' : 'Music off'; mbtn.setAttribute('aria-pressed', String(mus.on)); }
+  function voice(type, f, t, dur, vol, dest, atk, rel) {
+    var c = actx, o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + atk); g.gain.setTargetAtTime(.0001, t + dur, rel);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + rel * 6);
+  }
+  function burst(t, dur, vol, ftype, ff, dest) {
+    var c = actx, src = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
+    src.buffer = mus.noise; fl.type = ftype; fl.frequency.value = ff;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    src.connect(fl); fl.connect(g); g.connect(dest); src.start(t, Math.random() * .5); src.stop(t + dur + .02);
+  }
+  function kick(t) {
+    var c = actx, o = c.createOscillator(), g = c.createGain(); o.type = 'sine';
+    o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(46, t + .12);
+    g.gain.setValueAtTime(.55, t); g.gain.exponentialRampToValueAtTime(.0001, t + .28); o.connect(g); g.connect(mus.master); o.start(t); o.stop(t + .3);
+  }
+  function playStep(n, t) {
+    var bar = Math.floor(n / 16) % 4, st = n % 16, chord = CHORDS[bar];
+    if (st === 0) chord.forEach(function (m) { voice('triangle', hz(m), t, SIXT * 14, .05, mus.pad, .5, .35); });
+    if (st % 4 === 0) kick(t);
+    if (st === 4 || st === 12) burst(t, .14, .1, 'bandpass', 1800, mus.master);
+    if (st % 2 === 0) burst(t, .045, st % 4 === 2 ? .07 : .035, 'highpass', 7500, mus.master);
+    if ([0, 3, 6, 8, 11, 14].indexOf(st) > -1) voice('sine', hz(BASS[bar]), t, SIXT * 1.6, .2, mus.master, .01, .08);
+    var a = ARP[st]; if (a >= 0) { var m = chord[a % 4] + 12 + (a >= 4 ? 12 : 0); voice('triangle', hz(m), t, .05, .11, mus.fx, .004, .11); }
+  }
+  function schedule() {
+    while (mus.next < actx.currentTime + .18) { playStep(mus.step, mus.next); mus.step++; mus.next += SIXT; }
+  }
+  function beginMusic() {
+    if (mus.run || !mus.on || mus.hold || !actx || actx.state !== 'running') return; mus.run = true;
+    var c = actx;
+    if (!mus.master) {
+      mus.noise = c.createBuffer(1, c.sampleRate, c.sampleRate); var d = mus.noise.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      mus.master = c.createGain(); mus.master.gain.value = 0; mus.master.connect(c.destination);
+      var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1500; mus.pad = c.createGain(); mus.pad.connect(lp); lp.connect(mus.master);
+      mus.fx = c.createGain(); mus.fx.connect(mus.master);
+      var dl = c.createDelay(1), fb = c.createGain(), wet = c.createGain(); dl.delayTime.value = SIXT * 3; fb.gain.value = .32; wet.gain.value = .5;
+      mus.fx.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(mus.master);
+    }
+    mus.next = c.currentTime + .08; mus.step = 0;
+    mus.master.gain.cancelScheduledValues(c.currentTime); mus.master.gain.setValueAtTime(mus.master.gain.value, c.currentTime); mus.master.gain.linearRampToValueAtTime(.32, c.currentTime + 3);
+    mus.timer = setInterval(schedule, 30);
+  }
+  function stopMusic() {
+    if (!mus.run) return; mus.run = false; clearInterval(mus.timer);
+    var c = actx; mus.master.gain.cancelScheduledValues(c.currentTime); mus.master.gain.setValueAtTime(mus.master.gain.value, c.currentTime); mus.master.gain.linearRampToValueAtTime(0, c.currentTime + .5);
+  }
+  function wakeMusic() {
+    if (!AC || !mus.on || mus.hold) return; actx = actx || new AC();
+    var go = function () { beginMusic(); };
+    actx.state === 'running' ? go() : actx.resume().then(go, function () {});
+  }
+  paintMusic();
+  mbtn.addEventListener('click', function (e) {
+    e.stopPropagation(); mus.on = !mus.on; store.set('music', mus.on ? 'on' : 'off'); paintMusic();
+    if (mus.on) wakeMusic(); else stopMusic();
+  });
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { addEventListener(ev, wakeMusic, { capture: true }); });
+  document.addEventListener('visibilitychange', function () {
+    if (!actx) return; if (document.hidden) actx.suspend(); else if (mus.on) actx.resume();
+  });
+  wakeMusic();
+
+  // smooth scroll
+  var lenis = null, progUntil = 0;
+  if (window.Lenis && !reduce) {
+    lenis = new Lenis({ lerp: .075, wheelMultiplier: .85, touchMultiplier: 1.2 });
+    (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
+  }
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href'); if (id.length < 2) return;
+      var el = $(id); if (!el) return; e.preventDefault();
+      var dist = Math.abs(el.getBoundingClientRect().top), dur = Math.min(2.6, Math.max(1, dist / 3200));
+      progUntil = performance.now() + dur * 1000 + 300;
+      lenis ? lenis.scrollTo(el, { offset: -20, duration: dur, lock: true, force: true }) : el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+
+  // reveals
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: .2 });
+  $$('.rv, .hl').forEach(function (el) { io.observe(el); });
+
+  // parallax blobs + nav hide-on-scroll + journey progress
+  var blobs = $$('[data-par]'), nav = $('#nav'), lastY = 0;
+  function onScroll() {
+    var y = window.scrollY, vh = innerHeight;
+    if (!reduce) blobs.forEach(function (b) { b.style.transform = 'translateY(' + (y * b.dataset.par) + 'px)'; });
+    nav.classList.toggle('away', y > lastY + 4 && y > vh * .6 && !document.activeElement.closest('.nav'));
+    if (y < lastY - 4 || y < vh * .6) nav.classList.remove('away');
+    lastY = y;
+    // active nav link
+    ['journey', 'work', 'desk', 'hello'].forEach(function (id) {
+      var el = $('#' + id), b = el.getBoundingClientRect();
+      var a = $('.nav [data-go="' + id + '"]'); a && a.classList.toggle('on', b.top < vh * .4 && b.bottom > vh * .4);
+    });
+  }
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // turntable: its own player, separate from the landing-page music. Plays the time-of-day Bollywood
+  // playlists from bollywoodforever.netlify.app through a hidden YouTube player: [startMin, endMin, videoIds].
+  var tt = $('#tt'), ttCap = $('#ttCap'), ttHost = $('#ttYT');
+  var TT_BLOCKS = [[0,60,["O8fIwHfZz2E","dlBX5YKuanI","I3rQkFFqCiI","II4CvWvgIsI","c0viCB5k3Mg"]],[60,360,["lTO6mICR9ng","qrC6yjMBIBA","jFImbhU7BL8","yk2tHuIP59s","vsVwvVYlUBs","XITbN_ULeOQ","cSfbbfIAypU","Gz-Kay5XXVw","Tpkv3jozpIw","iqyCMg-baKg","yv1EhF9b1Jg","4yb_3ygOZVw","30pG5qvq_0g","Wd5C65zkEvE","m8na451PgYU","qIbPsAGTFbg","AQJpf5HCvA4"]],[360,480,["43wT0xhvfsA","b04C6hKGLXA","ZYotlBxpM3Q","5kZ5o-oM0RI","waTwDgK2tkk","s1LozokQjIg","vCTW2GfcepQ","5h5lbqg_qEQ","L0zKs8i7Nc8","eMA6GHTQ4WA","g0eO74UmRBs","jo6iAkSoraY","mt9xg0mmt28","5IY4BNj0-10","fSS_R91Nimw","T94PHkuydcw","VqFn3FvVjk4","-d9nvq3402M","Gqy01K0wQ_k","ZWn5zOJvNAA","fdubeMFwuGs","284Ov7ysmfA","BddP6PYo2gs","taRBVfDRukY"]],[480,600,["__MruFsJEFE","dx57HiK1wUg","Yqj1_V90KJo","-bNwqXvMuB8","JS68-1RVTNY","KpuTKyfGM5w","PN4_aNSA1hg","7JFFl0lGrac","DlCT0mL7rnU","pElk1ShPrcE","p_0zsIyYs08","7yc_qkAi2J8","EIdVTM1lefk","N0uDmkTV08Y","udra3Mfw2oo","cLIQzxgFeNE","62cEYOeMBt0","YUH9jD__qHY","NTHz9ephYTw","nIappv5kWc0","7TRFf7uUfhQ","pGmbUdf6lEM","hVCYwwFwGEE","qFkNATtc3mc","Z9jOrApWJto","YxWlaYCA8MU"]],[600,720,["FEvBiayarlc","LQmHKl3oNu0","sSsw7QPrUk0","i7hVzQTCF-o","Azhtn4ptHQI","NvxCMwEaGHI","wvjbCSYmVNM","cSOvELyZbYY","ai_2a6hR7Bo","lbCRtrrMvSw","G7KtPzUpCAc","UfNjLCD-WVM","n6mraYuSELU","PuhOFhmy3BU","JQq5q1ppNB0","fP6MNznzVcQ","hu9Ac_HPC7s","XfBu-wdtiIM","jMfvlh0tjyo","abiL84EAWSY","9iIX4PBplAY","jFGKJBPFdUA"]],[720,840,["9FjuBvzF1E4","Xs5k7d6kzh8","5gTToFIZp-g","epYiGd853mQ","4dsFQFCvVGU","M4EZHGFK-1c","KH8TpOLROOQ","3cqPV0o4bX8","bC47NhozqG4","69CEiHfS_mc","bpOJmRlgg-4","HgIW7P4dsXU","EEX_XM6SxmY","aWMTj-rejvc","Wd2B8OAotU8","siDLgxNEbP8","_KhQT-LGb-4","9LtJYw1eY30","mdXHRJtBcEo","Deb9SA9Sfe4","cewzKXqQyIM","IVMquMDUQZY","OgCVBmIlIro"]],[840,960,["IgKdXLfxgQQ","FsNc7I33w60","H5sheEWfsOQ","f-inKsB2Gf8","uafw8rzyUv8","lZ2PhyBF3GQ","S9DsCP9Th7Y","m3gs5_y6N9M","mXkbWKr5ovU","zWEOx7TSM6I","kPtn26x8TZM","KgmeL_xuB0I","2zoIA42nJJc","RFx4g4GunYw","GwbrE069v_U","sXoCRkfVRXA","lBACSadCKaQ","mrdRHsIkK_c","AsguumsKgBI","ja9XA6Wsx80","-8SlOkUAW-4","d8IT-16kA8M","EQxEms7gnqs"]],[960,1080,["xdlZXTf2w34","c3DIXxIgi0c","uu-Qqj4B6iM","0mXqRqASqhY","YLsL8WcDc2U","LxpcP6rCYBk","2wn3RHVpfxE","qqvucsiv9VY","F7ENLXURT08","GyZyndDUWFs","o1RducJbUdc","p4fxIdy7ndw","y2O44HDZWws","FJ55SHCzt88","HQ4Ox7mLqds","t2VaF0ZX65w","oyaudgo5_8Y","OlMJdAWJpBs","6FURuLYrR_Q","OIRwYDfoM8U","jGBj55PMihM","AgX2II9si7w","yVuctV4uo3E","VOLKJJvfAbg"]],[1080,1200,["T1NtFQHEZhQ","OlvXDGJAMT0","KwiDJclWo44","iv7lcUkFVSc","useznoRhrWU","UcqI3uBKgTg","nRBWpbpBTcU","TK7nSgwGSAQ","aoJxD8xn3CY","WWZxDA81JFk","tQL-gx7PeBc","d9X3H9wPb5A","lpdRqn6xwiM","zAU_rsoS5ok","BNfAf4To73c","Usng5mo30lk","lgTHGZF3BQw","RemShT6JAHw","61fnZ1_UmxQ"]],[1200,1320,["nvqc7_67tJw","gd6_koJWT-k","WGXmDsOwW4k","J2Bh68GTUOU","-nnm9JXRZQ8","frIxzllegWg","0WtRNGubWGA","C8kSrkz8Hz8","sIooFGRBZJY","ZdsILjPkgA8","Wd7H311MrWA","PfuL6eJNqZY","vZ_NpLWuL00","yP9KiFTyBks","D8I2D6VLQQc","x4UjdNUjwoQ","aV32gcY9TaY","YmXJp4RtBCM","yIIGQB6EMAM","V-aWMKcuJSo","zjMtaw2mrrc","l75z7FrYRXI"]],[1320,1440,["FO6BUL8qMUo","PCCmg1tmMQs","QosnKggU-rY","Sut_KOIbwn0","9IzaWBsUhCU","II7ttbkotA0","P7jPdzXAgy8","f3FFOBrMmdg","DS-raAyMxl4","wTgrZE9RWNY","jIqRbFQl-ds","MQ-9qj4gUZs","j6muwUGdvXw","wF_B_aagLfI"]]];
+  var ttOn = false, ttPlayer = null, ttQueue = [], ttAt = 0, ttApi = null;
+  function ttPaint() {
+    tt.setAttribute('aria-pressed', String(ttOn));
+    ttCap.innerHTML = ttOn ? 'Now spinning: <a href="https://bollywoodforever.netlify.app/" target="_blank" rel="noopener">Bollywood Forever</a>. Tap the record to stop.' : 'Needle up. Tap the record to put some Bollywood on.';
+  }
+  function ttBuild() {
+    var d = new Date(), ist = (d.getUTCHours() * 60 + d.getUTCMinutes() + 330) % 1440;
+    var blk = TT_BLOCKS.filter(function (b) { return ist >= b[0] && ist < b[1]; })[0] || TT_BLOCKS[0];
+    ttQueue = blk[2].slice(); for (var i = ttQueue.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = ttQueue[i]; ttQueue[i] = ttQueue[j]; ttQueue[j] = t; }
+    ttAt = 0;
+  }
+  function ttNext() { ttAt = (ttAt + 1) % ttQueue.length; if (ttOn && ttPlayer) ttPlayer.loadVideoById(ttQueue[ttAt]); }
+  function ttStart() {
+    if (!ttQueue.length) ttBuild();
+    if (ttPlayer) { ttPlayer.loadVideoById(ttQueue[ttAt]); return; }
+    function make() {
+      ttPlayer = new YT.Player(ttHost, { width: 200, height: 200, videoId: ttQueue[ttAt], playerVars: { autoplay: 1, playsinline: 1, controls: 0, rel: 0 },
+        events: { onReady: function (e) { if (ttOn) e.target.playVideo(); }, onStateChange: function (e) { if (e.data === 0) ttNext(); }, onError: ttNext } });
+    }
+    if (window.YT && YT.Player) return make();
+    if (ttApi) return;
+    ttApi = document.createElement('script'); ttApi.src = 'https://www.youtube.com/iframe_api'; var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () { prev && prev(); make(); }; document.head.appendChild(ttApi);
+  }
+  tt.addEventListener('click', function () {
+    ttOn = !ttOn; ttPaint();
+    // the turntable takes over from the landing music while it plays, and hands it back (if it's on) when stopped
+    mus.hold = ttOn; if (ttOn) stopMusic(); else wakeMusic();
+    if (ttOn) ttStart(); else if (ttPlayer && ttPlayer.pauseVideo) ttPlayer.pauseVideo();
+  });
+  ttPaint();
+
+  // journey map: scroll -> distance along the route. Camera, car and card all ease with time-based damping.
+  var JD = [
+    { yr: '2015', role: 'Project Head, Operations', co: 'AIESEC', mono: 'AI', logo: 'assets/logos/aiesec.png', place: 'Poland &amp; Georgia', when: 'Jul 2015 &ndash; Dec 2016', text: 'Ran operations across two countries and put <b>15 projects</b> into the world.', stats: [['15', 'projects implemented']], gallery: [['assets/gallery/aiesec-1.jpg', 'Selfie with the AIESEC team in Poland', 1.333], ['assets/gallery/aiesec-2.jpg', 'On stage at the Saakashvili Presidential Library, Georgia', 1.5]], c: '#FF6B4A' },
+    { yr: '2016', role: 'Associate Marketing Analyst', co: 'FuturEd', mono: 'Fu', logo: 'assets/logos/futured.png', place: 'Delhi', when: 'Oct 2016 &ndash; Sep 2017', text: 'First marketing seat. Learned to read the numbers and tie them to <b>sales</b>.', stats: [['INR 20L', 'in sales']], c: '#FFD23F' },
+    { yr: '2017', role: 'Client Relationship Manager', co: 'Delhi School of Internet Marketing', mono: 'DS', logo: 'assets/logos/dsim.png', place: 'Gurugram', when: 'Oct 2017 &ndash; Jun 2018', text: 'Moved closer to the customer and owned the <b>client relationship</b> end to end.', stats: [['INR 50L', 'in sales']], c: '#4F9E4A' },
+    { yr: '2020', role: 'Marketing Specialist', co: 'QS I-GAUGE', mono: 'QS', logo: 'assets/logos/qs.png', place: 'Bengaluru', when: 'Aug 2020 &ndash; Dec 2021', text: 'Managed integrated marketing across <b>online and offline</b> channels.', stats: [['30', 'online &amp; offline events in a single quarter']], c: '#2F7FD8' },
+    { yr: '2022', role: 'Team Lead, Growth Marketing', co: 'MPOWER Financing', mono: 'MP', logo: 'assets/logos/mpower.png', place: 'Bengaluru', when: 'Jan 2022 &ndash; Jan 2026', text: 'Led growth marketing for four years: influencers, automation, community and new IPs.', stats: [['$75M', 'in revenue']], gallery: [['assets/gallery/mpower-1.jpg', 'Receiving the Emerging Managers Program certificate at MPOWER', 0.808], ['assets/gallery/mpower-2.jpg', 'The team at MPOWER Impact: Reflection and Celebration', 1.246], ['assets/gallery/mpower-3.jpg', 'The MPOWER team posing on stage', 1.502], ['assets/gallery/mpower-4.jpg', 'MPOWER team get-together on the steps at night', 1.333]], c: '#B7A2FF' },
+    { yr: 'Now', role: 'Growth Marketing Manager', co: 'Corridor Platforms', mono: 'CP', logo: 'assets/logos/corridor.png', place: 'Bengaluru', when: 'Feb 2026 &ndash; Present', text: 'Building the growth engine from scratch. <b>$1M in pipeline</b> in the first three months.', stats: [['$1M', 'pipeline in 3 months']], c: '#FF6B4A' }
+  ];
+  // logos: set `logo: 'assets/logos/<name>.svg'` on a stop to show the real mark; otherwise a monogram badge shows.
+  var NS = 'http://www.w3.org/2000/svg', n = JD.length;
+  var jTrack = $('#jTrack'), jWorld = $('#jWorld'), jArt = $('#jArt'), jMe = $('#jMe'), jFlip = $('#jFlip'), jCard = $('#jCard'), jcIn = $('#jcIn');
+  function mk(tag, attrs) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+  var seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  // map art: soft city blocks, water and parks (the route is drawn on top)
+  for (var g = 0; g <= 4800; g += 400) { jArt.appendChild(mk('path', { d: 'M' + g + ' 0V3200', stroke: 'var(--road)', 'stroke-width': 12, opacity: .5 })); }
+  for (var h = 0; h <= 3200; h += 400) { jArt.appendChild(mk('path', { d: 'M0 ' + h + 'H4800', stroke: 'var(--road)', 'stroke-width': 12, opacity: .5 })); }
+  ['M0 600L1800 0', 'M4800 400L3000 3200', 'M0 3000L2000 2300'].forEach(function (dd) { jArt.appendChild(mk('path', { d: dd, stroke: 'var(--road)', 'stroke-width': 16, opacity: .45 })); });
+  jArt.appendChild(mk('path', { d: 'M0 2900C700 2780 1500 3000 2400 2880S4000 3000 4800 2860', fill: 'none', stroke: 'var(--water)', 'stroke-width': 110, 'stroke-linecap': 'round' }));
+  [[2220, 1450, 340, 230], [900, 800, 380, 240], [3900, 1300, 420, 280], [600, 2500, 300, 200]].forEach(function (b) { jArt.appendChild(mk('ellipse', { cx: b[0], cy: b[1], rx: b[2], ry: b[3], fill: 'var(--water)' })); });
+  for (var i = 0; i < 44; i++) jArt.appendChild(mk('rect', { x: Math.round(rnd() * 4500), y: Math.round(rnd() * 2900), width: 140 + Math.round(rnd() * 200), height: 100 + Math.round(rnd() * 150), rx: 50, fill: 'var(--park)', opacity: .85 }));
+
+  // the U: down the left arm, round the bottom, up the right arm. Stops sit at fixed distances along it.
+  var UX = 1700, UY = 1000, UH = 900, UR = 520;
+  var d = 'M' + UX + ' ' + UY + ' V' + (UY + UH) + ' A' + UR + ' ' + UR + ' 0 0 0 ' + (UX + 2 * UR) + ' ' + (UY + UH) + ' V' + UY;
+  jArt.appendChild(mk('path', { d: d, class: 'casing' }));
+  jArt.appendChild(mk('path', { d: d, class: 'base' }));
+  var done = mk('path', { d: d, class: 'done' }); jArt.appendChild(done);
+  var total = done.getTotalLength(), ARC = Math.PI * UR;
+  var stopLen = [0, 620, UH + ARC * .22, UH + ARC * .78, total - 620, total];
+  var PTS = stopLen.map(function (l) { var q = done.getPointAtLength(l); return [q.x, q.y]; });
+  done.style.strokeDasharray = total;
+
+  [[1500, 1250, 1100, 380, 30, 0], [2300, 2000, 1200, 420, 36, -8], [2900, 1500, 900, 340, 28, -14], [1900, 800, 800, 300, 32, -20], [2400, 2500, 1300, 360, 40, -5]].forEach(function (m) {
+    var e = document.createElement('div'); e.className = 'mist'; e.style.cssText = '--x:' + m[0] + 'px;--y:' + m[1] + 'px;--w:' + m[2] + 'px;--h:' + m[3] + 'px;--dur:' + m[4] + 's;--dl:' + m[5] + 's'; jWorld.insertBefore(e, $('#jMarks'));
+  });
+  var marks = [], dots = [], dotsEl = $('#jDots');
+  JD.forEach(function (st, i) {
+    var m = document.createElement('div'); m.className = 'mk'; m.style.cssText = 'left:' + PTS[i][0] + 'px;top:' + PTS[i][1] + 'px;--c:' + st.c;
+    var badge = st.logo ? '<img src="' + st.logo + '" alt="">' : '<span class="mono">' + st.mono + '</span>';
+    m.innerHTML = '<div class="lg">' + badge + '<span><b>' + st.co + '</b><small>' + st.place + ' &middot; ' + st.yr + '</small></span></div><button type="button" aria-label="Go to ' + st.co + '">' + (i + 1) + '</button>';
+    $('#jMarks').appendChild(m); marks.push(m);
+    m.querySelector('button').addEventListener('click', function () { goStop(i); });
+    var li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.style.setProperty('--c', st.c); b.setAttribute('aria-label', st.yr + ' ' + st.co);
+    b.addEventListener('click', function () { goStop(i); }); li.appendChild(b); dotsEl.appendChild(li); dots.push(b);
+  });
+  var WALK = 4.4, DWELL = .55, seen = false, stuck = false;
+  function trackH() { return Math.round(innerHeight * (1 + WALK + DWELL)); }
+  var overview = false;
+  function trackTop() { return jTrack.getBoundingClientRect().top + window.scrollY; }
+  function scrollToY(y, dur) {
+    if (!dur) { progUntil = performance.now() + 160; lenis ? lenis.scrollTo(y, { immediate: true, force: true }) : window.scrollTo(0, y); jLastY = y; return; }
+    progUntil = performance.now() + (dur || 1.4) * 1000 + 250; lenis ? lenis.scrollTo(y, { duration: dur || 1.4, lock: true, force: true }) : window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' }); }
+  var detail = null;   // once the journey is complete, a stop opened from the list while the map stays in overview
+  function goStop(i) { if (stuck) { detail = Math.max(0, Math.min(n - 1, i)); return; } overview = false; scrollToY(trackTop() + (i / (n - 1)) * WALK * innerHeight, 1.6); }
+
+  var shown = null;
+  function showCard(key) {
+    if (key === shown) return; var first = shown === null; shown = key;
+    function fill() {
+      if (key === 'ov') {
+        jCard.style.setProperty('--c', '#FF6B4A');
+        jcIn.innerHTML = '<div class="jc-top"><span class="tile">&#9873;</span><p><b>Where I\'ve worked</b>Six stops &middot; 2015 &rarr; now</p></div><div class="jc-bd"><ul class="ov-list">' +
+          JD.map(function (st, i) { return '<li><button type="button" data-go="' + i + '" style="--c:' + st.c + '"><i></i><span><b>' + st.co + '</b><small>' + st.place + ' &middot; ' + st.role + '</small></span><em>' + st.yr + '</em></button></li>'; }).join('') + '</ul></div>';
+        $$('[data-go]', jcIn).forEach(function (b) { b.onclick = function () { goStop(+b.dataset.go); }; });
+      } else {
+        var i = key, st = JD[i]; jCard.style.setProperty('--c', st.c);
+        jcIn.innerHTML = '<div class="jc-top"><span class="tile">' + (i + 1) + '</span><p><b>' + st.co + '</b>' + st.place + ' &middot; ' + st.when + '</p><em>' + ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + n).slice(-2) + '</em></div>' +
+          '<div class="jc-bd"><h3>' + st.role + '</h3><p class="txt">' + st.text + '</p><ul class="jc-stats">' + st.stats.map(function (x) { return '<li><b>' + x[0] + '</b><span>' + x[1] + '</span></li>'; }).join('') + '</ul>' + gal(st) +
+          '<div class="jc-nav"><button type="button" id="jPrev"' + (i === 0 ? ' disabled' : '') + '>&larr; Back</button>' + (detail !== null ? '<button type="button" id="jAll">All stops</button>' : '') + '<button type="button" id="jNext"' + (i === n - 1 ? ' disabled' : '') + '>Next &rarr;</button></div></div>';
+        $$('.jc-gal button', jcIn).forEach(function (b) { b.onclick = function () { openPhoto(b.dataset.src, b.dataset.alt); }; });
+        var all = $('#jAll'); if (all) all.onclick = function () { detail = null; };
+        $('#jPrev').onclick = function () { goStop(i - 1); }; $('#jNext').onclick = function () { goStop(i + 1); };
+      }
+      jCard.classList.remove('swap'); syncScroll();
+    }
+    if (first || reduce) fill(); else { jCard.classList.add('swap'); setTimeout(fill, 260); }
+  }
+  // when the card is taller than the space it has, let the mouse wheel scroll inside it (Lenis would otherwise take the wheel)
+  function syncScroll() { if (jCard.scrollHeight > jCard.clientHeight + 1) jCard.setAttribute('data-lenis-prevent', ''); else jCard.removeAttribute('data-lenis-prevent'); }
+  addEventListener('resize', syncScroll);
+  function gal(st) {
+    return st.gallery ? '<div class="jc-gal"><span>Gallery</span><div style="--sum:' + st.gallery.reduce(function (a, g) { return a + g[2]; }, 0) + '">' + st.gallery.map(function (g) { return '<button type="button" style="flex:' + g[2] + ' 1 0" data-src="' + g[0] + '" data-alt="' + g[1] + '" aria-label="Open photo: ' + g[1] + '"><img src="' + g[0] + '" alt="' + g[1] + '"></button>'; }).join('') + '</div></div>' : '';
+  }
+  var lb = document.createElement('div'); lb.className = 'lb'; lb.innerHTML = '<img alt=""><button type="button" aria-label="Close photo">&times;</button>'; document.body.appendChild(lb);
+  function openPhoto(src, alt) { lb.firstChild.src = src; lb.firstChild.alt = alt; lb.classList.add('open'); }
+  $$('.intro .pola, .story .pola').forEach(function (b) { b.onclick = function () { openPhoto(b.dataset.src, b.dataset.alt); }; });
+  lb.onclick = function () { lb.classList.remove('open'); };
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  function setMarks(active, all) {
+    marks.forEach(function (m, j) { m.classList.toggle('on', !all && j === active); m.classList.toggle('reached', all || j <= active); });
+    dots.forEach(function (b, j) { b.classList.toggle('on', !all && j === active); b.classList.toggle('done', all || j < active); });
+    $('#jYr').textContent = all ? '2015 → now' : JD[active].yr.replace('Now', '2026') + ' → ' + (active < n - 1 ? JD[active + 1].yr.replace('Now', 'now') : 'now');
+  }
+
+  // up-scroll mid-walk -> straight to an overview. Reaching the last stop -> overview, then on to the next section.
+  // Once the journey has been completed it stays an overview for the rest of the visit: scrolling through it glides
+  // straight across (never changes the page height, so the scroll position can't jump).
+  var jLastY = window.scrollY, dnAcc = 0;
+  function setH() { jTrack.style.height = trackH() + 'px'; }
+  addEventListener('scroll', function () {
+    var y = window.scrollY, dy = y - jLastY; jLastY = y;
+    var r = jTrack.getBoundingClientRect(), vh = innerHeight, inside = r.top <= 1 && r.bottom > 0, endPx = WALK * vh + .12 * vh;
+    if (!seen && inside && -r.top >= endPx) { seen = true; stuck = true; overview = true; }
+    if (!inside) { detail = null; if (r.top > vh * .9 && !seen) { overview = false; dnAcc = 0; } return; }
+    if (performance.now() < progUntil) return;
+    if (seen) {
+      var top = trackTop(), bottom = top + jTrack.offsetHeight - vh;
+      if (dy > 0 && y < bottom - 12 && y >= top - 2) scrollToY(bottom, 0);
+      else if (dy < 0 && y > top + 12) scrollToY(top, 0);
+      return;
+    }
+    if (dy < 0 && !overview) { overview = true; dnAcc = 0; scrollToY(trackTop(), 0); }
+    else if (dy > 0 && overview && -r.top < endPx) { dnAcc += dy; if (dnAcc > 40) { overview = false; dnAcc = 0; } }
+  }, { passive: true });
+
+  var wasOv = false, vw = 0, vh2 = 0, zoom = 1, tS = 0, ovS = 0, cam = null, hd = 0, faceS = 1, face0 = 1, visible = false, last = 0;
+  function size() { vw = innerWidth; vh2 = innerHeight; setH(); } size(); addEventListener('resize', size);
+  new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }, { rootMargin: '100px' }).observe($('#jPin'));
+  function ease(x) { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); }
+  function damp(cur, tgt, rate, dt) { return reduce ? tgt : cur + (tgt - cur) * (1 - Math.exp(-rate * dt)); }
+  var bx0 = UX - 330, bx1 = UX + 2 * UR + 330, by0 = UY - 330, by1 = UY + UH + UR + 260;
+  function frame(now) {
+    requestAnimationFrame(frame); var dt = Math.min(.05, (now - last) / 1000 || .016); last = now; if (!visible) return;
+    var r = jTrack.getBoundingClientRect(), sp = Math.max(0, -r.top), t = Math.min(1, sp / (WALK * vh2)), ovWant = stuck || overview || sp >= WALK * vh2 + .12 * vh2;
+    if (!ovWant) { if (wasOv) tS = t; else { tS = damp(tS, t, 5, dt); if (Math.abs(t - tS) < .0004) tS = t; } } else if (!wasOv) tS = Math.max(tS, t); wasOv = ovWant;
+    ovS = damp(ovS, ovWant ? 1 : 0, 4, dt); if (Math.abs(ovS - (ovWant ? 1 : 0)) < .002) ovS = ovWant ? 1 : 0;
+    var stage = tS * (n - 1), i = Math.min(n - 2, Math.floor(stage)), f = stage - i, gk = ease((f - .12) / .76);
+    var L = stopLen[i] + (stopLen[i + 1] - stopLen[i]) * gk, P = done.getPointAtLength(L);
+    var A = done.getPointAtLength(Math.max(0, L - 8)), B = done.getPointAtLength(Math.min(total, L + 8));
+    var ddx = B.x - A.x, ddy = B.y - A.y;
+    if (Math.abs(ddx) > .5) face0 = ddx < 0 ? -1 : 1; faceS = damp(faceS, face0, 9, dt);
+    var tilt = Math.max(-22, Math.min(22, Math.atan2(ddy, Math.abs(ddx) + .001) * 180 / Math.PI)) * face0;
+    var tgtH = Math.atan2(ddy, ddx) * 180 / Math.PI + 90, dh = ((tgtH - hd + 540) % 360) - 180; hd += reduce ? dh : dh * (1 - Math.exp(-6 * dt));
+    jMe.style.transform = 'translate(' + P.x + 'px,' + P.y + 'px) rotate(' + hd.toFixed(2) + 'deg)'; jMe.style.opacity = (1 - ovS).toFixed(3);
+    $('#jNeedle').style.transform = 'rotate(' + hd + 'deg)';
+    done.style.strokeDashoffset = (total - L) * (1 - ovS);
+    var wide = vw > 860, cx = vw * (wide ? .66 : .5), cy = vh2 * (wide ? .5 : .3), s = (wide ? .85 : .6) * zoom;
+    var gx = cx - P.x * s, gy = cy - P.y * s;
+    var availW = wide ? vw * .6 : vw - 40, availH = vh2 - (wide ? 220 : 300), so = Math.min(availW / (bx1 - bx0), availH / (by1 - by0), 1.1);
+    var ox = cx - (bx0 + bx1) / 2 * so, oy = (wide ? vh2 * .5 : vh2 * .34) - (by0 + by1) / 2 * so;
+    gx += (ox - gx) * ovS; gy += (oy - gy) * ovS; s += (so - s) * ovS;
+    if (!cam) cam = { x: gx, y: gy, s: s };
+    cam.x = damp(cam.x, gx, 4.5, dt); cam.y = damp(cam.y, gy, 4.5, dt); cam.s = damp(cam.s, s, 4.5, dt);
+    jWorld.style.transform = 'translate3d(' + cam.x.toFixed(2) + 'px,' + cam.y.toFixed(2) + 'px,0) scale(' + cam.s.toFixed(4) + ')';
+    var act = gk < .5 ? i : i + 1;
+    if (ovWant) { showCard(detail !== null ? detail : 'ov'); setMarks(act, true); if (detail !== null) marks.forEach(function (m, j) { m.classList.toggle('on', j === detail); }); } else { showCard(act); setMarks(act, false); }
+  }
+  requestAnimationFrame(frame);
+  $('#jIn').onclick = function () { zoom = Math.min(1.6, zoom + .15); };
+  $('#jOut').onclick = function () { zoom = Math.max(.7, zoom - .15); };
+  $('#jRe').onclick = function () { zoom = 1; };
+  addEventListener('keydown', function (e) {
+    var r = jTrack.getBoundingClientRect(); if (r.top > 0 || r.bottom < innerHeight || /input|textarea/i.test(e.target.tagName)) return;
+    if (stuck) return; var cur = overview ? 0 : (typeof shown === 'number' ? shown : 0);
+    if (e.key === 'ArrowRight' && cur < n - 1) goStop(cur + 1); if (e.key === 'ArrowLeft' && cur > 0) goStop(cur - 1);
+  });
+
+  // work box
+  // work box
+  var WORK = [
+    { name: 'Influencer program', chip: 'Brand &amp; lead gen', ic: 'I', c: '#C4513A', bg: 'linear-gradient(165deg,#D2634B,#B54632)', glow: 'rgba(210,100,70,.5)', main: '$50M+', sub: 'in loan application volume', gallery: [['assets/work/inf-1.jpg', 'Yudi J YouTube video: Being Brutally Honest About MS in USA (Fall 2025), with an MPOWER Financing segment', 1.523, 3, 1, 46, -3], ['assets/work/inf-2.jpg', 'Murrad on Run YouTube video: Study in USA, does it make more sense after Trump, featuring MPOWER Financing', 1.518, 50, 46, 46, 3], ['assets/work/inf-3.jpg', 'Creator in a short video: Wanna study accelerated', 0.748, 68, 0, 22, 4], ['assets/work/inf-4.jpg', 'Creator in a short video featuring MPOWER Financing', 0.75, 12, 47, 24, -4]], 
+      head: "Trusted Voices, Real Results: How 20+ Creators Drove $50M+ in Loan Application Volume",
+      pitch: "A creator-led program that made MPOWER the trusted financing choice for international students, built on peer recommendations instead of corporate advertising.",
+      cap: "Creator-led: 20+ creators, 200+ videos and $50M+ in loan application volume.",
+      obj: "<p>The program set out to:</p><ul><li><b>Build brand awareness</b> among aspiring international students planning higher education in the US and Canada</li><li><b>Create brand trust</b> through authentic voices, working with creators who had been international students and now live and work in those countries</li><li><b>Drive lead generation</b> by turning creator audiences into engaged prospects and loan applicants</li><li><b>Position MPOWER as a guide, not just a lender</b>, by supporting students with useful education throughout their study-abroad journey</li></ul>",
+      aud: "<p><b>Primary audience:</b></p><ul><li>Aspiring students in Asia and Africa planning higher education in the US or Canada</li><li>Students who need financing to fund their studies abroad</li><li>Students who rely on peer recommendations and real experiences more than corporate advertising</li></ul><p><b>Creator partners:</b></p><ul><li>Former international students now living and working in the US or Canada</li><li>Creators who already make content guiding students on admissions, visas, finances and life abroad</li></ul>",
+      str: "<p><b>1. Partnering with creators who had made the same journey</b></p><p>I chose creators whose own story matched the audience\u2019s goals. Their recommendations came across as real peer advice rather than paid promotion, which built credibility for MPOWER.</p><p><b>2. Creator content at scale</b></p><p>I worked with more than 20 creators across Asia and Africa to produce more than 200 videos. The videos wove MPOWER into practical guidance on studying abroad and how to pay for it, which kept the brand visible across markets.</p><p><b>3. Weekly live sessions</b></p><p>We ran weekly live sessions with creators to teach students about studying abroad, financing options and the loan process. Students could ask questions in real time, which addressed their concerns and moved them closer to applying.</p><p><b>4. Cohorts for incoming students</b></p><p>We built cohorts for incoming students to guide and support them before they left and as they started their programs. This built community and loyalty and kept them engaged with MPOWER beyond a single conversion.</p><p><b>5. Offline events in India</b></p><p>We hosted on-ground events in India with one of the creators. These brought the creator\u2019s online influence into in-person interactions with students and families and raised awareness of the brand.</p>",
+      res: [['200+', 'videos delivered with more than 20 creators across Asia and Africa'], ['$50M+', 'in loan application volume driven through the program']] },
+    { name: 'Online Events', chip: 'Events', ic: 'E', c: '#4A7A5C', bg: 'linear-gradient(165deg,#5E8F70,#3F6A50)', glow: 'rgba(90,150,110,.5)', main: '30', sub: 'online events in 1 quarter', gallery: [['assets/work/oe-1.jpg', 'R.I.S.E. Punjab Edition invite from QS I-GAUGE: Redefining Institutional Strategy for Excellence, co-hosted by Chandigarh University and Chitkara University', 1.0, 1, 1, 27, -4], ['assets/work/oe-4.jpg', 'QS I-GAUGE live event on 16 July 2021, co-hosted by Shoolini University and UPES', 1.855, 30, 0, 40, 3], ['assets/work/oe-5.jpg', 'R.I.S.E. Madhya Pradesh Edition on 9 July 2021, co-hosted by Jagran Lakecity University and Oriental University', 1.816, 68, 6, 31, -3], ['assets/work/oe-2.jpg', 'News coverage: QS I-GAUGE to host the State Level RISE Conference on June 18, with ten speakers', 1.047, 8, 47, 35, 2.5], ['assets/work/oe-3.jpg', 'News coverage: Dr Madhu Chitkara, Pro Chancellor of Chitkara University, at the R.I.S.E. Punjab Edition', 1.07, 52, 50, 35, -2.5]],
+      head: "Virtual B2B Event Series at QS-I·GAUGE (COVID-19 Period)",
+      pitch: "More than 30 online B2B events across 5 Indian states reached over 100,000 people during COVID-19, and 3 deals closed within about 4 months.",
+      obj: "<p>When COVID-19 lockdowns ruled out physical events, QS-I·GAUGE lost its main way of meeting higher education institutions in person. The goal was to replace that face-to-face presence with a series of online B2B events that would:</p><ul><li><b>Keep and grow brand presence</b> among target institutions while physical events were impossible</li><li><b>Build visibility at scale</b>, reaching more than 100,000 people across institutional leadership and students</li><li><b>Go deeper in key regional markets</b> by covering 5 Indian states through partnerships with respected local institutions</li><li><b>Use existing client relationships</b> to earn credibility with peer institutions that weren't clients yet</li><li><b>Fill the top of the sales funnel</b> with qualified institutional leads and turn them into closed deals</li></ul>",
+      aud: "<p><b>Primary audience (decision-makers and influencers):</b></p><ul><li>Institutional management: Vice Chancellors, Directors, Principals, Deans and Registrars</li><li>IQAC (Internal Quality Assurance Cell) heads and accreditation or ranking coordinators</li><li>Senior faculty and department heads who influence decisions on quality benchmarking and ratings</li></ul><p><b>Secondary audience (amplifiers):</b></p><ul><li>Students at participating and invited institutions. They raised the brand's visibility and showed institutions that QS-I·GAUGE mattered to their main stakeholders.</li></ul><p><b>Geographic focus:</b></p><ul><li>5 Indian states, anchored by the top 2 institutions in each state (10 partner institutions in total). All of them were existing QS-I·GAUGE clients.</li></ul>",
+      str: "<p><b>1. Partnering with existing clients</b></p><p>I didn't run the events as purely brand-hosted sessions. Instead, I co-hosted them with the top 2 client institutions in each state. This:</p><ul><li>Gave the events credibility, because prospects saw respected peers backing the QS-I·GAUGE rating</li><li>Drew on the partners' own networks, alumni and student bases to boost reach</li><li>Strengthened relationships with existing clients and set up renewals and referrals</li></ul><p><b>2. A large, consistent event series</b></p><p>I planned and ran more than 30 online B2B events over the campaign period. A steady run of events kept the brand visible for months instead of producing a single spike, and each state got repeated exposure.</p><p><b>3. Content built for each audience</b></p><ul><li><b>For leadership:</b> sessions on quality benchmarking, accreditation readiness, institutional ratings and running institutions through COVID disruption</li><li><b>For students:</b> sessions that connected an institution's quality rating to employability, outcomes and the value of their degree</li><li>Speakers from partner institutions alongside QS-I·GAUGE experts, so the sessions read as thought leadership rather than a sales pitch</li></ul><p><b>4. Multi-channel promotion</b></p><ul><li>Partner institutions promoted the events through their official channels, mailing lists and student networks</li><li>Direct outreach to prospect institutions in each state, with personal invitations to management</li><li>Social media promotion to increase registrations and reach</li></ul><p><b>5. Lead capture and nurturing</b></p><ul><li>Collected registration and attendance data to find engaged institutions and decision-makers</li><li>Followed up with prospects who attended to start sales conversations</li><li>Passed qualified leads to the sales team and supported them with nurture content through a sales cycle of about 4 months</li></ul>",
+      res: [['30+', 'online B2B events across 5 states'], ['100K+', 'people reached, including institutional management and students'], ['10', 'strategic partnerships with the top 2 client institutions in each state'], ['3', 'deals closed within about 4 months of the events']] },
+    { name: 'Women Who Dream', chip: 'Campaign &amp; IP', ic: 'D', c: '#6B5B95', bg: 'linear-gradient(165deg,#7D6CA8,#574A82)', glow: 'rgba(130,110,190,.5)', main: '2.4×', sub: 'growth in qualified leads from women in 2025', gallery: [['assets/work/wwd-1.jpg', 'MPOWER campaign graphic: our new initiative is empowering women and transforming futures', 1.914, 3, 1, 44, -4], ['assets/work/wwd-2.jpg', 'That\'s What She Said podcast: It\'s normal to be afraid as an international student, with Caitlyn Jagani and Claire Almand', 1.848, 52, 3, 40, 3.5], ['assets/work/wwd-3.jpg', 'A woman speaking at a podcast table in an MPOWER office', 0.57, 10, 36, 25, 2], ['assets/work/wwd-4.jpg', 'That\'s What She Said podcast: I secured $98,000 in scholarships for my MBA in the U.S., with Shinora Khan', 1.809, 47, 40, 40, -3]],
+      head: "Women Who Dream: How a Purpose-Led Campaign Grew Qualified Leads from Women 2.4× and Revenue 2.2×",
+      pitch: "We built a brand awareness program focused on women's empowerment for MPOWER Financing. It combined a dedicated landing page, a Women in STEM scholarship and an original podcast IP celebrating international female students in the US and Canada. In 2025, qualified leads from women grew 2.4× and revenue from women grew 2.2×.",
+      cap: "A purpose-led campaign: 2.4× qualified leads and 2.2× revenue from women in 2025.",
+      obj: "<p>The campaign set out to:</p><ul><li><b>Build brand awareness among women</b> planning to study abroad, a segment with high potential that MPOWER wasn't reaching enough</li><li><b>Bring in additional qualified leads from women</b> for MPOWER's study-abroad loans in the US and Canada</li><li><b>Position MPOWER as a brand that champions women's empowerment</b> and their access to global education, going beyond a loan provider</li><li><b>Increase revenue from women borrowers</b> by turning awareness into applications and funded loans</li></ul>",
+      aud: "<p><b>Primary audience:</b></p><ul><li>Women from 180 countries who want to pursue higher education in the US and Canada, especially master's programs</li><li>Women interested in STEM fields, where they are often underrepresented and where funding can be a major barrier</li></ul><p><b>Secondary audience:</b></p><ul><li>Current international female students in the US and Canada, who act as role models, storytellers and brand advocates</li><li>Parents and families who influence decisions about studying abroad</li><li>Universities, student communities and partners focused on women in education and STEM</li></ul>",
+      str: "<p><b>1. Empowerment-led content</b></p><p>Created content around women's empowerment, ambition and breaking barriers in global education. Inspiration was the hook, and financing was presented as the way to make it happen.</p><p><b>2. A dedicated landing page for conversion</b></p><p>Sent campaign traffic to a landing page built specifically for women: <a href=\"https://www.mpowerfinancing.com/get-a-loan/study-abroad-for-women\" target=\"_blank\" rel=\"noopener\">Study Abroad for Women</a>. It gave women a clear, relevant path from inspiration to checking eligibility and applying, with messaging written for their concerns and goals.</p><p><b>3. A Women in STEM scholarship to fill the top of the funnel</b></p><p>Launched the <a href=\"https://www.mpowerfinancing.com/scholarships/women-in-stem\" target=\"_blank\" rel=\"noopener\">Women in STEM scholarship</a> to attract high-intent women in STEM fields. The scholarship:</p><ul><li>Gave real value up front and built trust and goodwill</li><li>Brought in a steady stream of top-of-funnel leads that could be nurtured into loan applicants</li><li>Showed that MPOWER is committed to closing the gender gap in STEM</li></ul><p><b>4. Building the Women Who Dream brand IP</b></p><p>The campaign grew into an owned brand IP called <b>Women Who Dream</b>, which gave the effort a lasting identity beyond a single campaign.</p><p><b>5. The Women Who Dream podcast series</b></p><p>Launched a <a href=\"https://www.youtube.com/watch?v=q5uopeTUMZg&amp;list=PLVFONv0RJ_S5qnrR9TIZ-5rgvKQ1pOXfQ&amp;index=10\" target=\"_blank\" rel=\"noopener\">podcast series</a> highlighting the achievements of international female students studying in the US and Canada. The series:</p><ul><li>Gave prospective students authentic, relatable role models</li><li>Created a library of evergreen content for social media, email and the website</li><li>Built community and emotional connection with the brand</li></ul><p><b>6. Social media campaigns</b></p><p>Ran supporting social campaigns to extend the reach of the IP, the scholarship and the podcast. This kept women in the audience engaged with the brand and moved them back to the landing page.</p>",
+      res: [['2.4×', 'growth in qualified leads from women in 2025'], ['2.2×', 'growth in revenue from women in 2025']] },
+    { name: 'Ambassador program', chip: 'Referral &amp; community', ic: 'A', c: '#A8793A', bg: 'linear-gradient(165deg,#BD8D48,#94662B)', glow: 'rgba(200,150,80,.5)', main: '$75M+', sub: 'in disbursed loan capital', gallery: [['assets/work/amb-2.jpg', 'MPOWER story: Juan\'s journey from Colombia to the U.S.', 1.778, 25, 0, 40, -3], ['assets/work/amb-3.jpg', 'MPOWER story: Rohan\'s journey from Pakistan to the U.S.', 0.685, 68, 3, 21, 3.5], ['assets/work/amb-4.jpg', 'MPOWER story: how MPOWER Financing helped Haotong from China', 1.778, 12, 50, 42, 2.5], ['assets/work/amb-5.jpg', 'A student ambassador in an MPOWER shirt: Hey future students', 0.646, 62, 46, 20, -4]], 
+      head: "From Zero to 500+ Student Ambassadors: Turning Peer Trust into a Growth Channel at MPOWER Financing",
+      pitch: "The program grew from no ambassadors before 2023 to 500+ in 2026, and supported over $75M in disbursed loan capital.",
+      obj: "<p>The goal was to replace expensive paid acquisition with a trusted, peer-led channel that could scale across borders. Digital acquisition costs in international student financing were high, and prospective students trust peers and regional alumni far more than any corporate ad. MPOWER had no ambassador program before 2023, so the community model had to be built from scratch.</p><p>The program set out to:</p><ul><li>Reduce reliance on paid ads by turning referrals into a core acquisition channel.</li><li>Close the cross-border trust gap with credible, local voices.</li><li>Recruit, motivate and retain top student leaders across MPOWER's key global corridors.</li></ul>",
+      aud: "<p>The program worked with two connected audiences: the students who needed financing, and the student and alumni leaders who could vouch for MPOWER.</p><ul><li><b>Prospective international students:</b> Aspiring students planning to study abroad who needed financing and relied on peer recommendations over corporate advertising.</li><li><b>Student and alumni ambassadors:</b> Current students and alumni who were active community leaders across North America, Asia and LATAM. The mix included natural salespeople and creators who preferred sharing their story over selling.</li></ul>",
+      str: "<p>We built a referral engine on five pillars: transparent tracking, premium rewards, faster service, rotating contests and a community worth belonging to.</p><ul><li><b>Automated referral tracking:</b> Launched in 2023, it moved the channel from a manual experiment to a real acquisition engine. Every ambassador got a live dashboard to follow their progress, which removed the guesswork from attribution.</li><li><b>Premium rewards:</b> Ambassadors earned $400 per successful referral against the standard $300, a 33% bonus.</li><li><b>Priority queue:</b> Applicants referred by an ambassador moved to the front of the service queue, which shortened underwriting turnaround.</li><li><b>Rotating monthly contests:</b> Volume sprints rewarded the top 5 to 10 performers each round. We alternated them with user-generated content contests, covering video reviews, campus tips and honest social posts, so ambassadors who were not natural salespeople stayed engaged and nobody burned out.</li><li><b>Thought leadership and community:</b> Ambassadors were featured as webinar panelists, testimonial leads and community spokespeople, building a professional profile of their own. The private MPOWER Hub connected all of them with MPOWER leadership and with peers around the world.</li></ul><p>The rollout moved in phases: groundwork and tracking infrastructure in 2021 and 2022, the official launch in 2023, rapid scaling across North America, Asia and LATAM in 2024 and 2025, and 500+ active ambassadors by 2026.</p>",
+      res: [['500+', 'active ambassadors by 2026, up from 37 in 2023, 198 in 2024 and 387 in 2025'], ['$75M+', 'in disbursed loan capital supported by the ambassador channel'], ['95%+', 'application submission completion rate, supported by rotating contests and priority service'], ['3,400+', 'verified student visa uploads driven directly to MPOWER']] },
+    { name: 'MPOWERing Dreams Tour', chip: 'Tour', ic: 'T', c: '#2F7F8F', bg: 'linear-gradient(165deg,#3E91A2,#26697A)', glow: 'rgba(70,160,180,.5)', main: '3,500+', sub: 'qualified leads generated', gallery: [['assets/work/tour-1.jpg', 'News coverage: MPOWER Financing partners with Yudi J to sponsor free Study in the USA workshops across India', 1.127, 2, 22, 33, -3.5], ['assets/work/tour-2.jpg', 'A packed auditorium at an MPOWERing Dreams session, with the speaker presenting on stage', 1.469, 30, 0, 40, 3], ['assets/work/tour-3.jpg', 'A group selfie from the stage with the audience and the MPOWER team', 1.639, 68, 8, 30, -3], ['assets/work/tour-4.jpg', 'The MPOWER team in navy MPOWER Financing polos under flowering arches', 1.333, 42, 47, 38, 2.5]],
+      head: "How a digital-only lender won the trust of students headed abroad, one city at a time.",
+      pitch: "3,500+ qualified leads generated.",
+      obj: "<p>Build trust and scale for MPOWER Financing in the international student market. MPOWER had no public-facing office in India, and a loan for a degree abroad is a decision most students make only once. Ads alone weren't going to earn that kind of credibility. The goal was to earn it through a creator partnership and in-person experiences, then turn it into qualified leads and loan applications during the March&ndash;June funding window.</p>",
+      aud: "<p>Indian students planning to study abroad who are actively looking for funding between March and June; extended to students in Nepal in 2026. They face a noisy market full of conflicting advice and want personalised answers on financing, choosing an intake and planning their careers.</p>",
+      str: "<p><b>Earn trust online, prove it offline, then scale.</b></p><p><b>1. Creator-led groundwork (Sep 2023 &ndash; Jan 2024):</b> Partnered with Yudi J, a creator with a large following among Indian students. One long-form YouTube video a month, each followed by a live online workshop. This steady six-month rhythm built familiarity before a single event took place.</p><p><b>2. Taking it offline (Mar 2024):</b> Launched the first MPOWERing Dreams India Tour across Pune, Mumbai, Hyderabad and Bengaluru. Events were held in auditoriums, not banquet halls, to keep a classroom feel.</p><p><b>3. Scale and expand (Nov 2024 onward):</b> Grew to five cities (Mumbai, Bengaluru, Hyderabad, Ahmedabad and New Delhi), added sessions led by Purdue University and Duke University, and made the tour a twice-yearly series. In March 2026, entered Nepal with a local media agency, leading with awareness rather than conversion because the banking landscape there is different.</p><p><b>The event playbook</b></p><ul><li>Registrations opened 30&ndash;60 days out on Yudi's platform, backed by targeted paid ads and organic content</li><li>Luma Pro for check-ins, chosen after testing Eventbrite and Yudi's own site</li><li>A one-hour early-bird Q&amp;A with personalised answers, which rewarded students for arriving early</li><li>A &ldquo;Bingo&rdquo; networking session that helped students find future roommates and peers, and became a feedback favourite</li><li>Sessions from Yudi and the partner universities on career planning and choosing intakes</li><li>City-specific WhatsApp communities that kept the conversation going after each event</li><li>A lean four-person team handling vendors, AV, logistics and budget</li></ul>",
+      res: [['~3,500', 'qualified leads from the first four-city tour'], ['1,500+', 'attendees at the first four-city tour'], ['21', 'events to date: 20 across India, 1 in Nepal'], ['8,000+', 'registrations at the Nepal debut'], ['1,500+', 'attendees at the Nepal debut']] }
+  ];
+  var BW = 800, BD = 260, BH = 80, CW = 176, CH = 240, SUNK = -(CH - BH + 40), VZ = 30, VX = 57, N2 = WORK.length;
+  var box3 = $('#box3'), boxStage = $('#boxStage'), boxTrack = $('#boxTrack'), boxFit = $('#boxFit'), boxCap = $('#boxCap'), cs = $('#cs'), csIn = $('#csIn');
+  function face(cls, w, h, x, y, z, rot, html) {
+    var el = document.createElement('div'); el.className = 'f ' + cls; el.style.width = w + 'px'; el.style.height = h + 'px';
+    el.style.left = (x - w / 2) + 'px'; el.style.top = (y - h) + 'px'; el.style.transform = 'translate3d(0,0,' + z + 'px) ' + rot; el.innerHTML = html || ''; box3.appendChild(el); return el;
+  }
+  face('wall-i', BW, BH, BW / 2, 0, 0, 'rotateX(-90deg)');
+  face('wall-i', BD, BH, 0, BD / 2, 0, 'rotateZ(90deg) rotateX(-90deg)');
+  var lid = face('box-lid', BW, BD, BW / 2, 0, BH, 'rotateX(-180deg)');
+  var stand = function (z) { return 'translate3d(0px,0px,' + z + 'px) rotateZ(-90deg) rotateX(-90deg)'; };
+  var faced = function (k) { return 'translate3d(' + (BW / 2 - k.x).toFixed(1) + 'px,' + (BD * .95) + 'px,210px) rotateZ(' + (-VZ) + 'deg) rotateX(' + (-VX) + 'deg)'; };
+  var rim = function (k, z) { k.el.style.clipPath = z < 0 ? 'inset(' + (z <= SUNK ? 0 : -90) + 'px -90px ' + (-z) + 'px -90px)' : ''; };
+  var wks = WORK.map(function (w, i) {
+    var x = 100 + i * ((BW - 200) / (N2 - 1)), el = document.createElement('button'); el.className = 'wk'; el.type = 'button';
+    el.style.cssText = '--bg:' + w.bg + ';--glow:' + w.glow + ';--c:' + w.c + ';left:' + (x - CW / 2) + 'px;top:' + (BD / 2 - CH) + 'px';
+    el.setAttribute('aria-label', w.name + ', open case study');
+    el.innerHTML = '<div class="wk-top"><span class="wk-ic">' + w.ic + '</span><span class="wk-tag">0' + (i + 1) + '</span></div><div><p class="wk-hand">' + w.name + '</p><div class="wk-main">' + w.main + '</div><p class="wk-sub">' + w.sub + '</p></div>';
+    box3.appendChild(el); return { el: el, w: w, i: i, x: x, z: SUNK };
+  });
+  face('wall-o', BD, BH, BW, BD / 2, 0, 'rotateZ(-90deg) rotateX(-90deg)');
+  face('wall-o', BW, BH, BW / 2, BD, 0, 'rotateX(-90deg)', '<span class="brand">Campaigns Launched</span>');
+  wks.forEach(function (k) { k.el.style.transform = stand(k.z); rim(k, k.z); });
+
+  var boxOpen = false, picked = null, hoverK = null, biList = $('#biList');
+  WORK.forEach(function (w, i) {
+    var li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.style.setProperty('--c', w.c); b.dataset.k = i;
+    b.innerHTML = '<b>0' + (i + 1) + '</b>' + w.name; li.appendChild(b); biList.appendChild(li);
+  });
+  function hover(k) {
+    if (picked || !boxOpen) return;
+    if (hoverK && hoverK !== k) leave(hoverK);
+    hoverK = k; k.z = 24; k.el.style.transform = stand(24); k.el.classList.add('hov');
+    $$('button', biList).forEach(function (b) { b.classList.toggle('on', +b.dataset.k === k.i); });
+  }
+  function leave(k) {
+    if (picked) return; k.z = 0; k.el.style.transform = stand(0); k.el.classList.remove('hov'); if (hoverK === k) { hoverK = null; idleCap(); }
+    $$('button', biList).forEach(function (b) { b.classList.remove('on'); });
+  }
+  wks.forEach(function (k) {
+    k.el.addEventListener('pointerenter', function () { hover(k); });
+    k.el.addEventListener('pointerleave', function () { leave(k); });
+    k.el.addEventListener('focus', function () { hover(k); }); k.el.addEventListener('blur', function () { leave(k); });
+    k.el.addEventListener('click', function () {
+      if (!boxOpen) return;
+      if (picked === k) { curOpen.classList.remove('show'); openCS(k); return; }
+      if (picked) unpick();
+      pick(k);
+    });
+  });
+  biList.addEventListener('pointerover', function (e) { var b = e.target.closest('[data-k]'); if (b) hover(wks[+b.dataset.k]); });
+  biList.addEventListener('pointerleave', function () { hoverK && leave(hoverK); });
+  biList.addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (!b) return; if (!boxOpen) { box3.click(); return; } if (picked) unpick(); pick(wks[+b.dataset.k]); });
+
+  function openBox() {
+    if (boxOpen) return; boxOpen = true; boxStage.classList.add('opened'); idleCap();
+    lid.style.transform = 'translate3d(0,0,' + BH + 'px) rotateX(-72deg)';
+    wks.forEach(function (k, i) {
+      setTimeout(function () {
+        if (picked === k) return; k.z = 0;
+        k.el.style.transition = 'transform 1.6s cubic-bezier(.22,1,.36,1), clip-path 1.6s cubic-bezier(.22,1,.36,1), box-shadow .6s, filter .6s';
+        k.el.style.transform = stand(0); rim(k, 0); setTimeout(function () { k.el.style.clipPath = ''; k.el.style.transition = 'transform .7s cubic-bezier(.22,1,.36,1), box-shadow .6s, filter .6s'; }, 1700);
+      }, reduce ? 0 : 800 + i * 130);
+    });
+  }
+  // the box stays shut until the visitor opens it
+  box3.setAttribute('role', 'button'); box3.tabIndex = 0; box3.setAttribute('aria-label', 'Open the box of campaigns');
+  box3.addEventListener('click', function () { if (!boxOpen) { curOpen.classList.remove('show'); openBox(); box3.removeAttribute('role'); box3.removeAttribute('tabindex'); box3.removeAttribute('aria-label'); box3.classList.add('is-open'); } });
+  box3.addEventListener('keydown', function (e) { if (!boxOpen && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); box3.click(); } });
+  function fit() { boxFit.style.setProperty('--bs', Math.min(.95, innerWidth / (innerWidth > 860 ? 1900 : 960)).toFixed(3)); }
+  fit(); addEventListener('resize', fit);
+
+  // rotate the open box: drag sideways (mouse, touch or pen), or use the left/right arrow keys. It coasts to a stop,
+  // and returns to the home angle when a card is picked so the card always faces the visitor.
+  var yaw = VZ, yawV = 0, spin = null, pend = null, dragging = false, noClick = false;
+  function idleCap() { boxCap.innerHTML = '&nbsp;'; }
+  function applyYaw() {
+    box3.style.transform = 'rotateX(' + VX + 'deg) rotateZ(' + yaw.toFixed(2) + 'deg)';
+    lid.style.opacity = Math.abs(((yaw - VZ + 540) % 360) - 180) > 55 ? '.18' : '';   // the open lid would hide the cards from the back
+  }
+  function stopSpin() { if (spin) { cancelAnimationFrame(spin); spin = null; } }
+  function coast() {
+    stopSpin(); var last = performance.now();
+    (function step(now) {
+      var dt = Math.min(40, now - last); last = now; yaw += yawV * dt; yawV *= Math.pow(.992, dt); applyYaw();
+      if (Math.abs(yawV) > .004) spin = requestAnimationFrame(step); else spin = null;
+    })(last);
+  }
+  function spinTo(target) {
+    stopSpin(); yawV = 0; var diff = ((target - yaw + 540) % 360) - 180, from = yaw;
+    if (reduce || Math.abs(diff) < .5) { yaw = target; applyYaw(); return; }
+    var t0 = performance.now(), dur = Math.min(1100, 450 + Math.abs(diff) * 3);
+    (function step(now) {
+      var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3); yaw = from + diff * e; applyYaw();
+      if (p < 1) spin = requestAnimationFrame(step); else { spin = null; yaw = target; applyYaw(); }
+    })(t0);
+  }
+  boxStage.addEventListener('pointerdown', function (e) {
+    if (!boxOpen || (e.pointerType === 'mouse' && e.button !== 0) || e.target.closest('.box-info')) return;
+    pend = { id: e.pointerId, x: e.clientX, lx: e.clientX, lt: performance.now() }; dragging = false;
+  });
+  boxStage.addEventListener('pointermove', function (e) {
+    if (!pend || e.pointerId !== pend.id) return;
+    if (!dragging) {
+      if (Math.abs(e.clientX - pend.x) < 7) return;
+      dragging = true; stopSpin(); yawV = 0; if (picked && !cs.classList.contains('open')) unpick();
+      boxStage.classList.add('rotating'); try { boxStage.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    var now = performance.now(), dx = e.clientX - pend.lx, dt = Math.max(1, now - pend.lt);
+    yaw -= dx * .32; applyYaw(); yawV = yawV * .5 - (dx * .32 / dt) * .5; pend.lx = e.clientX; pend.lt = now;
+  });
+  function endDrag(e) {
+    if (!pend || e.pointerId !== pend.id) return;
+    if (dragging) { noClick = true; setTimeout(function () { noClick = false; }, 0); if (performance.now() - pend.lt > 90) yawV = 0; if (Math.abs(yawV) > .01 && !reduce) coast(); }
+    boxStage.classList.remove('rotating'); pend = null; dragging = false;
+  }
+  boxStage.addEventListener('pointerup', endDrag); boxStage.addEventListener('pointercancel', endDrag);
+  boxStage.addEventListener('click', function (e) { if (noClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+  boxStage.addEventListener('keydown', function (e) {
+    if (!boxOpen || cs.classList.contains('open') || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    e.preventDefault(); if (picked) unpick(); stopSpin(); yawV = 0; spinTo(yaw + (e.key === 'ArrowRight' ? -25 : 25));
+  });
+  function boxScroll() {
+    var r = boxTrack.getBoundingClientRect(), t = -r.top / (r.height - innerHeight);
+  }
+  addEventListener('scroll', boxScroll, { passive: true }); boxScroll();
+
+  // case study overlay
+  function rich(h) { return '<div class="cs-tx">' + (h.charAt(0) === '<' ? h : '<p>' + h + '</p>') + '</div>'; }
+  function csFill(k) {
+    var w = k.w;
+    csIn.style.setProperty('--c', w.c);
+    csIn.innerHTML = '<div class="cs-hero"><span class="k"><i>' + w.ic + '</i>' + w.chip + (w.head ? ' &middot; ' + w.name : '') + '</span><h2' + (w.head ? ' class="long"' : '') + '>' + (w.head || w.name) + '</h2><p class="pitch">' + w.pitch + '</p></div>' +
+      '<div class="cs-body"><div>' + (w.obj ? '<div class="cs-sec"><h3>Objective</h3>' + rich(w.obj) + '</div>' : '') + (w.aud ? '<div class="cs-sec"><h3>Target group</h3>' + rich(w.aud) + '</div>' : '') + (w.str ? '<div class="cs-sec"><h3>Strategy</h3>' + rich(w.str) + '</div>' : '') +
+      '<div class="cs-sec"><h3>Result</h3><div class="cs-tx"><ul class="cs-res">' + w.res.map(function (x) { return '<li><b>' + x[0] + '</b><span>' + x[1] + '</span></li>'; }).join('') + '</ul>' + (w.resList ? '<ul class="cs-rl">' + w.resList + '</ul>' : '') + '</div></div>' +
+      (w.gallery ? '<div class="cs-polas">' + w.gallery.map(function (g, i) { return '<button type="button" class="pola" style="--x:' + g[3] + '%;--y:' + g[4] + '%;--w:' + g[5] + '%;--r:' + g[6] + 'deg;--z:' + (i + 1) + '" data-src="' + g[0] + '" data-alt="' + g[1] + '" aria-label="Open image: ' + g[1] + '"><img src="' + g[0] + '" alt="' + g[1] + '"></button>'; }).join('') + '</div>' : '') + '</div></div>';
+    $$('.cs-polas .pola', csIn).forEach(function (b) { b.onclick = function () { openPhoto(b.dataset.src, b.dataset.alt); }; });
+    cs.scrollTop = 0;
+  }
+  function pick(k) {
+    if (picked) return; picked = k; spinTo(VZ); hoverK && k !== hoverK && leave(hoverK);
+    k.el.classList.add('hov', 'picked'); k.el.style.transition = 'transform 1s cubic-bezier(.22,1,.36,1), box-shadow .6s, filter .6s'; k.el.style.transform = faced(k);
+    $$('button', biList).forEach(function (b) { b.classList.toggle('on', +b.dataset.k === k.i); });
+  }
+  // a picked card waits until it is clicked again; clicking anywhere else puts it back
+  function unpick() {
+    if (!picked || cs.classList.contains('open')) return; var k = picked; picked = null;
+    k.z = 0; k.el.style.transform = stand(0); k.el.classList.remove('hov', 'picked'); idleCap();
+    $$('button', biList).forEach(function (b) { b.classList.remove('on'); }); curOpen.classList.remove('show');
+  }
+  var curOpen = document.createElement('div'); curOpen.className = 'cur-open'; curOpen.setAttribute('aria-hidden', 'true'); curOpen.textContent = 'Open'; document.body.appendChild(curOpen);
+  addEventListener('pointermove', function (e) {
+    var t = e.target.closest ? e.target : null, on = e.pointerType !== 'touch' && t && !cs.classList.contains('open') && (picked ? t.closest('.wk') === picked.el : (!boxOpen && !!t.closest('#box3')));
+    curOpen.classList.toggle('show', !!on);
+    if (on) curOpen.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+  }, { passive: true });
+  document.addEventListener('click', function (e) {
+    if (picked && !cs.classList.contains('open') && !e.target.closest('.wk') && !e.target.closest('#biList')) unpick();
+  });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape' && picked && !cs.classList.contains('open')) unpick(); });
+  function openCS(k) {
+    csFill(k); cs.classList.add('open'); cs.classList.remove('ready'); lenis && lenis.stop(); document.body.style.overflow = 'hidden';
+    cs.animate([{ clipPath: 'inset(50% 50% 50% 50% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)' }], { duration: reduce ? 1 : 800, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' }).onfinish = function () { cs.style.clipPath = 'inset(0)'; cs.classList.add('ready'); $('#csClose').focus(); };
+  }
+  function closeCS() {
+    if (!picked) return; var k = picked; cs.classList.remove('ready');
+    cs.getAnimations().forEach(function (a) { a.cancel(); });
+    cs.style.clipPath = 'inset(0)';
+    cs.animate([{ clipPath: 'inset(0% 0% 0% 0% round 0px)' }, { clipPath: 'inset(50% 50% 50% 50% round 18px)' }], { duration: reduce ? 1 : 600, easing: 'cubic-bezier(.65,0,.2,1)', fill: 'forwards' }).onfinish = function () {
+      cs.classList.remove('open'); cs.getAnimations().forEach(function (a) { a.cancel(); }); cs.style.clipPath = '';
+      lenis && lenis.start(); document.body.style.overflow = '';
+      k.z = 0; k.el.style.transform = stand(0); k.el.classList.remove('hov', 'picked'); picked = null; boxCap.innerHTML = '&nbsp;'; k.el.focus({ preventScroll: true });
+    };
+  }
+  $('#csClose').addEventListener('click', closeCS);
+  $('#csNext').addEventListener('click', function () { var k = wks[(picked.i + 1) % N2]; csIn.parentNode.classList.remove('ready'); setTimeout(function () { picked.el.style.transform = stand(0); picked.el.classList.remove('hov', 'picked'); picked = k; k.el.classList.add('hov', 'picked'); k.el.style.transform = faced(k); csFill(k); cs.classList.add('ready'); }, reduce ? 0 : 250); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCS(); });
+
+  // testimonials: edit this list. `li` is the person's LinkedIn profile URL. Optional `img: 'assets/people/name.jpg'` shows their photo instead of initials. `c` picks the note colour: 0 peach, 1 lilac, 2 blue, 3 coral.
+  var TESTI = [
+    { name: "Shreya Paul", img: "assets/people/shreya-paul.jpg", li: "https://www.linkedin.com/in/paulshreya/", c: 0, q: "Utkarsh is unbelievably supportive, reliable, consistent and always up for a new challenge. Beyond that, he brings a great energy to the team, constantly looking out for others, lifting morale, and making collaboration genuinely enjoyable. I’m grateful for his mentorship and everything I picked up along the way. Any team would be lucky to have him." },
+    { name: "Claire Almand", img: "assets/people/claire-almand.jpg", li: "https://www.linkedin.com/in/clairealmand/", c: 1, q: "He combines creativity with strong business instinct. From leading high-performing campaigns (including a few that went viral) to building and scaling core growth levers like influencer programs and top-of-funnel initiatives, Utkarsh consistently delivered meaningful impact. He stepped into critical ownership areas when the team needed it most and kept things moving without missing a beat." },
+    { name: "Tanya Lakhmani", img: "assets/people/tanya-lakhmani.jpg", li: "https://www.linkedin.com/in/tanya-lakhmani/", c: 2, q: "As someone in my first job, working with him genuinely changed my perspective on how to approach work, problem-solving, and responsibility. There was always something new to learn from the way he led the team and encouraged us to think better and do better. He is someone who leads with accountability, clarity, and trust. Whether it was managing campaigns or navigating challenges, he always ensured things were handled with ownership and a solutions-first mindset." },
+    { name: "Prachi Misra", img: "assets/people/prachi-misra.jpg", li: "https://www.linkedin.com/in/prachimisra/", c: 3, q: "Utkarsh has been able to lead the marketing endeavours at QS with efficiency and it was a great experience to collaborate with him on a regular basis. He is agile and innovative in his approach, demonstrating high ability to work independently as well as across teams to ensure successful implementation of projects." },
+    { name: "Indraneel Roy Choudhary", img: "assets/people/indraneel-roy-choudhary.jpg", li: "https://www.linkedin.com/in/indraneelroychoudhary/", c: 1, q: "I have had the pleasure to know Utkarsh when he was a part of my team on the national board of AIESEC Poland. During the course of my interaction with him, I observed him to be really hard working. He is extremely reliable and gets the job done no matter what. Utkarsh is an extremely sound with people and brings out positivity and constant drive to be better in him and the team. He is an excellent team player and always thinks of contributing to the bigger picture than just his own work. He is one of the most helpful person I have come across and I believe that he has a lot of international experience to add to the social circle or organisation he is a part of. I definitely believe that he will prove to be a great asset to any organisation he is a part of." },
+    { name: "Tatiana Terteriani", img: "assets/people/tatiana-terteriani.jpg", li: "https://www.linkedin.com/in/tatianaterteriani/", c: 0, q: "While working in a team Utkarsh showed his creativity and ability to bring new ideas, at the same time respecting others’ opinions, which tells about his excellent team working skills. He is ready to give feedback and help others to improve, as well as receive feedback and work upon it. Utkarsh is a very tolerant person who can get along with people from different cultures and countries well." },
+    { name: "Gabriel Bustamante", img: "assets/people/gabriel-bustamante.jpg", li: "https://www.linkedin.com/in/gabrielbustamante-3352417/", c: 2, q: "I had the opportunity to have Utkarsh on our team and his impecable work ethics, experience and dedication, made him an essential member of the team. He demonstrated knowledge of the industry and effectiveness when problem solving. A great team player and collaborator." },
+    { name: "Sahil Arora", img: "assets/people/sahil-arora.jpg", li: "https://www.linkedin.com/in/sahilaroraa/", c: 3, q: "Utkarsh is a self driven, goal oriented and a disciplined individual. He has got good set of skills under his sleeves which he demonstrated effectively while working on a project at Godrej. He's always an asset on your side." }
+  ];
+  var TN_BG = ['#FAE1BA', '#D9CCFF', '#D3E3FC', '#F9D1C6'], TN_AV = ['#FFD23F', '#B7A2FF', '#9FD3FF', '#FF9C84'], TN_R = [-1.4, 1.1, -.6, 1.6, -1.1, .8];
+  function initials(nm) { return nm.split(' ').map(function (w) { return w[0]; }).join('').slice(0, 2).toUpperCase(); }
+  var LI_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 10.5V16M8 7.8v.1M12 16v-3.2a2.3 2.3 0 0 1 4.6 0V16M12 10.5V16"/></svg>';
+  function makeNote(t, i, dup) {
+    var el = document.createElement('div'); el.className = 'tn'; el.setAttribute('role', 'button'); el.tabIndex = dup ? -1 : 0;
+    el.style.cssText = '--bg:' + TN_BG[t.c] + ';--r:' + TN_R[i % TN_R.length] + 'deg;--t:' + (TN_R[(i + 2) % TN_R.length] * 2) + 'deg';
+    if (dup) el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = (t.q.length > 110 ? '<span class="ex"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span>' : '') +
+      '<q>' + t.q + '</q><span class="by"><span class="av" style="--a:' + TN_AV[t.c] + '">' + (t.img ? '<img src="' + t.img + '" alt="">' : initials(t.name)) + '</span><b>' + t.name + '</b>' +
+      (t.li ? '<a class="li" href="' + t.li + '" target="_blank" rel="noopener" aria-label="' + t.name + ' on LinkedIn"' + (dup ? ' tabindex="-1"' : '') + '>' + LI_ICON + '</a>' : '') + '</span>';
+    var a = el.querySelector('a.li'); a && a.addEventListener('click', function (e) { e.stopPropagation(); });
+    el.addEventListener('click', function () { openNote(t, i); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openNote(t, i); } });
+    return el;
+  }
+  [['#tnA', TESTI, 0, '110s']].forEach(function (r) {
+    var track = $(r[0] + ' .tn-track'); track.parentNode.style.setProperty('--dur', r[3]);
+    for (var rep2 = 0; rep2 < 2; rep2++) for (var k = 0; k < 2; k++) r[1].forEach(function (t, j) { track.appendChild(makeNote(t, r[2] + j + k, rep2 === 1 || k === 1)); });
+  });
+  var tm = $('#tm'), tmIn = $('#tmIn');
+  function openNote(t, i) {
+    var c = makeNote(t, i, false), ex = c.querySelector('.ex'); ex && ex.remove();
+    c.addEventListener('click', function (e) { e.stopPropagation(); });
+    tmIn.innerHTML = ''; tmIn.appendChild(c);
+    tm.classList.add('open'); lenis && lenis.stop(); document.body.style.overflow = 'hidden'; $('#tmX').focus();
+  }
+  function closeNote() { if (!tm.classList.contains('open')) return; tm.classList.remove('open'); lenis && lenis.start(); document.body.style.overflow = ''; }
+  $('#tmX').addEventListener('click', closeNote); tm.addEventListener('click', function (e) { if (e.target === tm) closeNote(); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') closeNote(); });
+
+  (function () {
+    var st = $('.hello .stars'); if (!st) return;
+    var seed = 13; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var i = 0; i < 80; i++) {
+      var e = document.createElement('i'), big = i < 10; if (big) e.className = 'sp';
+      e.style.cssText = 'left:' + (rnd() * 100).toFixed(1) + '%;top:' + (rnd() * 62).toFixed(1) + '%;--z:' + (big ? 1.6 + rnd() : 1.2 + rnd() * 1.8).toFixed(1) + 'px;--t:' + (1.6 + rnd() * 3).toFixed(1) + 's;--dl:-' + (rnd() * 4).toFixed(1) + 's';
+      st.appendChild(e);
+    }
+  })();
+  var cm = $('#copyMail');
+  cm && cm.addEventListener('click', function () {
+    var done = function () { cm.classList.add('ok'); cm.setAttribute('aria-label', 'Email copied'); setTimeout(function () { cm.classList.remove('ok'); cm.setAttribute('aria-label', 'Copy email address'); }, 1600); };
+    try { navigator.clipboard.writeText('pandeyutkarsh200@gmail.com').then(done, done); } catch (_) { done(); }
+  });
+  // keyboard shortcuts mirror the contact links
+  var keys = { m: 'a.primary', l: '#li', r: '#cv' };
+  addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || /input|textarea/i.test(e.target.tagName)) return;
+    var s = keys[e.key.toLowerCase()]; if (s) { var a = $('.links ' + s); if (a && a.getAttribute('href') !== '#') a.click(); }
+    if (e.key.toLowerCase() === 't') btn.click();
+  });
+})();
+</script>
+</body>
+</html>
