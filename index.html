@@ -63,6 +63,9 @@ html[data-theme="night"] .hl { color: #13233A; }
 .bar .name { font-weight: 800; letter-spacing: -.03em; text-decoration: none; }
 .toggle { padding: 8px 14px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow-sm); font: 700 18px/1 var(--hand); transition: transform .4s var(--spring); }
 .toggle:hover { transform: scale(1.06) rotate(-2deg); }
+.toggle.wait { animation: nudge 1.8s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { box-shadow: var(--shadow-sm), 0 0 0 0 rgba(255,210,63,.0); } 50% { box-shadow: var(--shadow-sm), 0 0 0 6px rgba(255,210,63,.45); } }
+@media (prefers-reduced-motion: reduce) { .toggle.wait { animation: none; } }
 .tools { display: flex; gap: 8px; }
 @media (max-width: 600px) { .toggle { padding: 7px 10px; font-size: 16px; } .tools { gap: 6px; } }
 
@@ -377,7 +380,7 @@ html[data-theme="night"] .cs-sec a { color: #FFB59E; }
 .tt[aria-pressed="true"] .arm { transform: rotate(47deg); }
 .tt .led { fill: #5E6B80; transition: fill .4s; } .tt[aria-pressed="true"] .led { fill: #FF6B4A; filter: drop-shadow(0 0 4px #FF6B4A); }
 .tt:focus-visible { outline: 3px solid var(--coral); outline-offset: 8px; border-radius: 40px; }
-.tt-yt { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; overflow: hidden; }
+.tt-yt { position: fixed; left: 0; bottom: 0; width: 200px; height: 200px; overflow: hidden; opacity: .01; pointer-events: none; z-index: -1; }
 .tt-cap a { color: var(--coral); text-underline-offset: 3px; }
 .tt-cap { margin-top: 22px; text-align: center; font: 700 20px/1.2 var(--hand); color: var(--ink-2); }
 
@@ -687,7 +690,7 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
   var CHORDS = [[60, 64, 67, 71], [57, 60, 64, 67], [57, 60, 65, 69], [59, 62, 64, 67]], BASS = [48, 45, 41, 43];
   var ARP = [0, -1, 2, -1, 3, -1, 2, -1, 1, -1, 2, -1, 3, -1, 4, -1];
   function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
-  function paintMusic() { mbtn.textContent = mus.on ? 'Music on' : 'Music off'; mbtn.setAttribute('aria-pressed', String(mus.on)); }
+  function paintMusic() { mbtn.textContent = !mus.on ? 'Music off' : (mus.run || mus.hold) ? 'Music on' : 'Tap for music'; mbtn.classList.toggle('wait', mus.on && !mus.run && !mus.hold); mbtn.setAttribute('aria-pressed', String(mus.on)); }
   function voice(type, f, t, dur, vol, dest, atk, rel) {
     var c = actx, o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f;
     g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + atk); g.gain.setTargetAtTime(.0001, t + dur, rel);
@@ -717,7 +720,7 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
     while (mus.next < actx.currentTime + .18) { playStep(mus.step, mus.next); mus.step++; mus.next += SIXT; }
   }
   function beginMusic() {
-    if (mus.run || !mus.on || mus.hold || !actx || actx.state !== 'running') return; mus.run = true;
+    if (mus.run || !mus.on || mus.hold || !actx || actx.state !== 'running') return; mus.run = true; paintMusic();
     var c = actx;
     if (!mus.master) {
       mus.noise = c.createBuffer(1, c.sampleRate, c.sampleRate); var d = mus.noise.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -732,7 +735,7 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
     mus.timer = setInterval(schedule, 30);
   }
   function stopMusic() {
-    if (!mus.run) return; mus.run = false; clearInterval(mus.timer);
+    if (!mus.run) return; mus.run = false; paintMusic(); clearInterval(mus.timer);
     var c = actx; mus.master.gain.cancelScheduledValues(c.currentTime); mus.master.gain.setValueAtTime(mus.master.gain.value, c.currentTime); mus.master.gain.linearRampToValueAtTime(0, c.currentTime + .5);
   }
   function wakeMusic() {
@@ -740,12 +743,21 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
     var go = function () { beginMusic(); };
     actx.state === 'running' ? go() : actx.resume().then(go, function () {});
   }
+  // iOS mutes Web Audio while the ringer switch is on silent unless the page declares playback audio
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
   paintMusic();
   mbtn.addEventListener('click', function (e) {
-    e.stopPropagation(); mus.on = !mus.on; store.set('music', mus.on ? 'on' : 'off'); paintMusic();
+    e.stopPropagation();
+    // a first tap on this button only starts the music that was waiting for a tap; it doesn't switch it off
+    if (mus.on && !mus.pre && !mus.hold) { wakeMusic(); return; }
+    mus.on = !mus.on; store.set('music', mus.on ? 'on' : 'off'); paintMusic();
     if (mus.on) wakeMusic(); else stopMusic();
   });
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { addEventListener(ev, wakeMusic, { capture: true }); });
+  // Browsers only unlock audio on a real activation (mouse/key down, pointer/touch up, click), and iOS Safari
+  // ignores touchstart, so listen to all of them and keep re-trying (it also re-wakes audio the OS interrupted).
+  function gesture() { mus.pre = mus.run; wakeMusic(); }
+  var GEST = ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'];
+  GEST.forEach(function (ev) { addEventListener(ev, gesture, { capture: true }); });
   document.addEventListener('visibilitychange', function () {
     if (!actx) return; if (document.hidden) actx.suspend(); else if (mus.on) actx.resume();
   });
@@ -793,7 +805,7 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
   // playlists from bollywoodforever.netlify.app through a hidden YouTube player: [startMin, endMin, videoIds].
   var tt = $('#tt'), ttCap = $('#ttCap'), ttHost = $('#ttYT');
   var TT_BLOCKS = [[0,60,["O8fIwHfZz2E","dlBX5YKuanI","I3rQkFFqCiI","II4CvWvgIsI","c0viCB5k3Mg"]],[60,360,["lTO6mICR9ng","qrC6yjMBIBA","jFImbhU7BL8","yk2tHuIP59s","vsVwvVYlUBs","XITbN_ULeOQ","cSfbbfIAypU","Gz-Kay5XXVw","Tpkv3jozpIw","iqyCMg-baKg","yv1EhF9b1Jg","4yb_3ygOZVw","30pG5qvq_0g","Wd5C65zkEvE","m8na451PgYU","qIbPsAGTFbg","AQJpf5HCvA4"]],[360,480,["43wT0xhvfsA","b04C6hKGLXA","ZYotlBxpM3Q","5kZ5o-oM0RI","waTwDgK2tkk","s1LozokQjIg","vCTW2GfcepQ","5h5lbqg_qEQ","L0zKs8i7Nc8","eMA6GHTQ4WA","g0eO74UmRBs","jo6iAkSoraY","mt9xg0mmt28","5IY4BNj0-10","fSS_R91Nimw","T94PHkuydcw","VqFn3FvVjk4","-d9nvq3402M","Gqy01K0wQ_k","ZWn5zOJvNAA","fdubeMFwuGs","284Ov7ysmfA","BddP6PYo2gs","taRBVfDRukY"]],[480,600,["__MruFsJEFE","dx57HiK1wUg","Yqj1_V90KJo","-bNwqXvMuB8","JS68-1RVTNY","KpuTKyfGM5w","PN4_aNSA1hg","7JFFl0lGrac","DlCT0mL7rnU","pElk1ShPrcE","p_0zsIyYs08","7yc_qkAi2J8","EIdVTM1lefk","N0uDmkTV08Y","udra3Mfw2oo","cLIQzxgFeNE","62cEYOeMBt0","YUH9jD__qHY","NTHz9ephYTw","nIappv5kWc0","7TRFf7uUfhQ","pGmbUdf6lEM","hVCYwwFwGEE","qFkNATtc3mc","Z9jOrApWJto","YxWlaYCA8MU"]],[600,720,["FEvBiayarlc","LQmHKl3oNu0","sSsw7QPrUk0","i7hVzQTCF-o","Azhtn4ptHQI","NvxCMwEaGHI","wvjbCSYmVNM","cSOvELyZbYY","ai_2a6hR7Bo","lbCRtrrMvSw","G7KtPzUpCAc","UfNjLCD-WVM","n6mraYuSELU","PuhOFhmy3BU","JQq5q1ppNB0","fP6MNznzVcQ","hu9Ac_HPC7s","XfBu-wdtiIM","jMfvlh0tjyo","abiL84EAWSY","9iIX4PBplAY","jFGKJBPFdUA"]],[720,840,["9FjuBvzF1E4","Xs5k7d6kzh8","5gTToFIZp-g","epYiGd853mQ","4dsFQFCvVGU","M4EZHGFK-1c","KH8TpOLROOQ","3cqPV0o4bX8","bC47NhozqG4","69CEiHfS_mc","bpOJmRlgg-4","HgIW7P4dsXU","EEX_XM6SxmY","aWMTj-rejvc","Wd2B8OAotU8","siDLgxNEbP8","_KhQT-LGb-4","9LtJYw1eY30","mdXHRJtBcEo","Deb9SA9Sfe4","cewzKXqQyIM","IVMquMDUQZY","OgCVBmIlIro"]],[840,960,["IgKdXLfxgQQ","FsNc7I33w60","H5sheEWfsOQ","f-inKsB2Gf8","uafw8rzyUv8","lZ2PhyBF3GQ","S9DsCP9Th7Y","m3gs5_y6N9M","mXkbWKr5ovU","zWEOx7TSM6I","kPtn26x8TZM","KgmeL_xuB0I","2zoIA42nJJc","RFx4g4GunYw","GwbrE069v_U","sXoCRkfVRXA","lBACSadCKaQ","mrdRHsIkK_c","AsguumsKgBI","ja9XA6Wsx80","-8SlOkUAW-4","d8IT-16kA8M","EQxEms7gnqs"]],[960,1080,["xdlZXTf2w34","c3DIXxIgi0c","uu-Qqj4B6iM","0mXqRqASqhY","YLsL8WcDc2U","LxpcP6rCYBk","2wn3RHVpfxE","qqvucsiv9VY","F7ENLXURT08","GyZyndDUWFs","o1RducJbUdc","p4fxIdy7ndw","y2O44HDZWws","FJ55SHCzt88","HQ4Ox7mLqds","t2VaF0ZX65w","oyaudgo5_8Y","OlMJdAWJpBs","6FURuLYrR_Q","OIRwYDfoM8U","jGBj55PMihM","AgX2II9si7w","yVuctV4uo3E","VOLKJJvfAbg"]],[1080,1200,["T1NtFQHEZhQ","OlvXDGJAMT0","KwiDJclWo44","iv7lcUkFVSc","useznoRhrWU","UcqI3uBKgTg","nRBWpbpBTcU","TK7nSgwGSAQ","aoJxD8xn3CY","WWZxDA81JFk","tQL-gx7PeBc","d9X3H9wPb5A","lpdRqn6xwiM","zAU_rsoS5ok","BNfAf4To73c","Usng5mo30lk","lgTHGZF3BQw","RemShT6JAHw","61fnZ1_UmxQ"]],[1200,1320,["nvqc7_67tJw","gd6_koJWT-k","WGXmDsOwW4k","J2Bh68GTUOU","-nnm9JXRZQ8","frIxzllegWg","0WtRNGubWGA","C8kSrkz8Hz8","sIooFGRBZJY","ZdsILjPkgA8","Wd7H311MrWA","PfuL6eJNqZY","vZ_NpLWuL00","yP9KiFTyBks","D8I2D6VLQQc","x4UjdNUjwoQ","aV32gcY9TaY","YmXJp4RtBCM","yIIGQB6EMAM","V-aWMKcuJSo","zjMtaw2mrrc","l75z7FrYRXI"]],[1320,1440,["FO6BUL8qMUo","PCCmg1tmMQs","QosnKggU-rY","Sut_KOIbwn0","9IzaWBsUhCU","II7ttbkotA0","P7jPdzXAgy8","f3FFOBrMmdg","DS-raAyMxl4","wTgrZE9RWNY","jIqRbFQl-ds","MQ-9qj4gUZs","j6muwUGdvXw","wF_B_aagLfI"]]];
-  var ttOn = false, ttPlayer = null, ttQueue = [], ttAt = 0, ttApi = null;
+  var ttOn = false, ttPlayer = null, ttQueue = [], ttAt = 0, ttApi = null, ttReady = false, ttErrs = 0;
   function ttPaint() {
     tt.setAttribute('aria-pressed', String(ttOn));
     ttCap.innerHTML = ttOn ? 'Now spinning: <a href="https://bollywoodforever.netlify.app/" target="_blank" rel="noopener">Bollywood Forever</a>. Tap the record to stop.' : 'Needle up. Tap the record to put some Bollywood on.';
@@ -804,24 +816,31 @@ footer { padding-top: 22px; text-align: center; color: var(--ink-2); font: 700 1
     ttQueue = blk[2].slice(); for (var i = ttQueue.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = ttQueue[i]; ttQueue[i] = ttQueue[j]; ttQueue[j] = t; }
     ttAt = 0;
   }
-  function ttNext() { ttAt = (ttAt + 1) % ttQueue.length; if (ttOn && ttPlayer) ttPlayer.loadVideoById(ttQueue[ttAt]); }
-  function ttStart() {
-    if (!ttQueue.length) ttBuild();
-    if (ttPlayer) { ttPlayer.loadVideoById(ttQueue[ttAt]); return; }
+  function ttNext() { ttAt = (ttAt + 1) % ttQueue.length; if (ttOn && ttReady) ttPlayer.loadVideoById(ttQueue[ttAt]); }
+  // the player is built as soon as the page is idle, so the tap itself can call playVideo() (browsers
+  // only allow sound to start inside a tap, and the YouTube script would otherwise arrive too late for it)
+  function ttLoad() {
+    if (ttApi) return; ttApi = true; if (!ttQueue.length) ttBuild();
     function make() {
-      ttPlayer = new YT.Player(ttHost, { width: 200, height: 200, videoId: ttQueue[ttAt], playerVars: { autoplay: 1, playsinline: 1, controls: 0, rel: 0 },
-        events: { onReady: function (e) { if (ttOn) e.target.playVideo(); }, onStateChange: function (e) { if (e.data === 0) ttNext(); }, onError: ttNext } });
+      ttPlayer = new YT.Player(ttHost, { width: 200, height: 200, videoId: ttQueue[ttAt], host: 'https://www.youtube-nocookie.com',
+        playerVars: { playsinline: 1, controls: 0, rel: 0, enablejsapi: 1, origin: location.origin },
+        events: {
+          onReady: function () { ttReady = true; if (ttOn) { ttPlayer.loadVideoById(ttQueue[ttAt]); ttPlayer.playVideo(); } },
+          onStateChange: function (e) { if (e.data === 0) ttNext(); else if (e.data === 1) ttErrs = 0; },
+          // a video that can't be embedded is skipped; give up after a full lap so it can't loop forever
+          onError: function () { if (++ttErrs < ttQueue.length) ttNext(); else { ttOn = false; ttPaint(); mus.hold = false; wakeMusic(); } } } });
     }
     if (window.YT && YT.Player) return make();
-    if (ttApi) return;
-    ttApi = document.createElement('script'); ttApi.src = 'https://www.youtube.com/iframe_api'; var prev = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = function () { prev && prev(); make(); }; document.head.appendChild(ttApi);
+    var sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () { prev && prev(); make(); }; document.head.appendChild(sc);
   }
+  function ttStart() { ttLoad(); if (ttReady) { ttPlayer.loadVideoById(ttQueue[ttAt]); ttPlayer.playVideo(); } }
+  if ('requestIdleCallback' in window) requestIdleCallback(ttLoad, { timeout: 4000 }); else setTimeout(ttLoad, 2500);
   tt.addEventListener('click', function () {
     ttOn = !ttOn; ttPaint();
     // the turntable takes over from the landing music while it plays, and hands it back (if it's on) when stopped
     mus.hold = ttOn; if (ttOn) stopMusic(); else wakeMusic();
-    if (ttOn) ttStart(); else if (ttPlayer && ttPlayer.pauseVideo) ttPlayer.pauseVideo();
+    if (ttOn) ttStart(); else if (ttReady) ttPlayer.pauseVideo();
   });
   ttPaint();
 
